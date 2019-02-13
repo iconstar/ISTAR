@@ -1,3 +1,11 @@
+"""
+Programmer    : 김승규, 정해민 - pair programming
+description   : ISTAR SCORE of ICON
+Update Date   : 2018.02.14
+Update        : ADD function(name, symbol, balanceOf, get_total_token, get_token_owner)
+"""
+
+
 from iconservice import *
 
 TAG = 'IStarIRC3'
