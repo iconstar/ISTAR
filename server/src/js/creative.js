@@ -89,11 +89,12 @@ function($) {
       }
     });
 
-    $("#centralModalSuccess").on('show.bs.modal', function(){
-      alert("Confirm,구매완료");
-   });
 
-   $("#check").one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+    $('#centralModalSuccess').on('show.bs.modal', function(){
+      alert("Confirm,구매완료");
+    });
+
+   $('#check').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
 
    });
 
