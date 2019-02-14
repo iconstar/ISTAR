@@ -84,7 +84,29 @@
     }
 
 
+    .modal-header
+    {
+        color:#f8f9fa;
+        background-color: #1FC5C9;
+        padding:1rem 1rem;
+        font-weight:700;text-transform:uppercase;border:none;
+        font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;
+    }
+    .modal-content.active,modal-header
+    {
+        color:#f8f9fa;
+        background-color: #1FC5C9;
+        padding:1rem 1rem;
+        font-weight:700;text-transform:uppercase;border:none;
+        font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;
+    }
+
+    
+
     .wrap img{margin:3px;}
+
+
+
 
 
 
@@ -137,5 +159,7 @@
         .btn-primary:active,.btn-primary:focus,.btn-primary:hover{color:#fff;background-color:rgb(31, 175, 201)!important}
         .btn-primary:active,.btn-primary:focus{-webkit-box-shadow:0 0 0 .2rem
              rgba(31, 175, 201)!important;box-shadow:0 0 0 .2rem rgba(31, 175, 201)!important}
+
+
              
 

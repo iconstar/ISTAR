@@ -11,12 +11,12 @@
 /*----------------------------------------*/
 
 html,
-body {
-	height: 100%;
-	font-family: 'Josefin Sans', sans-serif;
-	-webkit-font-smoothing: antialiased;
-	font-smoothing: antialiased;
+body
+{
+  font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
 }
+
+
 
 h1,
 h2,
@@ -24,9 +24,7 @@ h3,
 h4,
 h5,
 h6 {
-	margin: 0;
-	color: #111111;
-	font-weight: 600;
+	font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
 }
 
 h1 {
@@ -937,7 +935,7 @@ ol {
 
 .product-filter-menu {
 	list-style: none;
-	margin: 0 -10px;
+	margin: 100px;
 	padding-bottom: 15px;
 }
 
@@ -2429,4 +2427,6 @@ ol {
 	.social-links a span {
 		display: none;
 	}
+
+
 }
