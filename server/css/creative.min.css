@@ -65,6 +65,51 @@
     @media (min-width:1200px){
         header.masthead h1{font-size:4rem}
     }
+
+
+    div.mycard {
+        margin: 10px;
+        border: 2px solid #CCC;
+        float: left;
+        width: 20%;
+       }
+
+    div.mycard:hover {
+        border: 1px solid #777;
+    }
+
+    div.mycard img {
+        width: 100%;
+        height: auto;
+    }
+
+
+    .modal-header
+    {
+        color:#f8f9fa;
+        background-color: #1FC5C9;
+        padding:1rem 1rem;
+        font-weight:700;text-transform:uppercase;border:none;
+        font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;
+    }
+    .modal-content.active,modal-header
+    {
+        color:#f8f9fa;
+        background-color: #1FC5C9;
+        padding:1rem 1rem;
+        font-weight:700;text-transform:uppercase;border:none;
+        font-family:'Open Sans','Helvetica Neue',Arial,sans-serif;
+    }
+
+    
+
+    .wrap img{margin:3px;}
+
+
+
+
+
+
     .service-box{max-width:400px}
     .portfolio-box{position:relative;display:block;max-width:650px;margin:0 auto}
     .portfolio-box .portfolio-box-caption{position:absolute;bottom:0;display:block;width:100%;height:100%;
@@ -114,5 +159,7 @@
         .btn-primary:active,.btn-primary:focus,.btn-primary:hover{color:#fff;background-color:rgb(31, 175, 201)!important}
         .btn-primary:active,.btn-primary:focus{-webkit-box-shadow:0 0 0 .2rem
              rgba(31, 175, 201)!important;box-shadow:0 0 0 .2rem rgba(31, 175, 201)!important}
+
+
              
 
