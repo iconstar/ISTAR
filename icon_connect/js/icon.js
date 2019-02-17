@@ -65,7 +65,7 @@ function setRequestScoreForm() {
             var readOnlyData = callBuilder
                 .from(fromAddress)
                 .to('cx915746079d5878a54e267b6e2378e8aa79f26953')
-                .method("symbol")
+                .method("name")
                 .build();
             scoreData.value = JSON.stringify({
                 "jsonrpc": "2.0",
