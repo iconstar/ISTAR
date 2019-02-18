@@ -90,6 +90,7 @@ ol {
 
 .section-title h2 {
 	font-size: 36px;
+	color: #fefefe;
 }
 
 .set-bg {
@@ -113,7 +114,7 @@ ol {
 .text-white span,
 .text-white li,
 .text-white a {
-	color: #fff;
+	color: #fefefe;
 }
 
 /*---------------------
@@ -871,14 +872,14 @@ ol {
 
 .product-item .pi-links a i {
 	display: inline-block;
-	color: #000;
+	color: #111111;
 }
 
-.product-item .pi-links a.add-card {
+.product-item .pi-links a.buy-card {
 	padding-top: 8px;
 }
 
-.product-item .pi-links a.add-card span {
+.product-item .pi-links a.buy-card span {
 	font-size: 12px;
 	font-weight: bold;
 	text-transform: uppercase;
@@ -888,13 +889,13 @@ ol {
 	opacity: 0;
 }
 
-.product-item .pi-links a.add-card:hover {
+.product-item .pi-links a.buy-card:hover {
 	width: 148px;
 	padding: 8px 18px 0;
 	text-align: left;
 }
 
-.product-item .pi-links a.add-card:hover span {
+.product-item .pi-links a.buy-card:hover span {
 	opacity: 1;
 	top: 10px;
 	-webkit-transition: all 0.4s ease 0.3s;
@@ -912,12 +913,12 @@ ol {
 	padding-left: 40px;
 	overflow: hidden;
 	font-weight: 700;
-	color: #111111;
+	color: #fefefe;
 }
 
 .product-item .pi-text p {
 	font-size: 16px;
-	color: #111111;
+	color: #fefefe;
 	margin-bottom: 0;
 }
 
