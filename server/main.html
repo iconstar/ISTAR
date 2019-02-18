@@ -3,159 +3,156 @@
 
 <head>
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-  <title>ICON IRC3 BASED I-STAR PROJECT</title>
+    <title>ICON IRC3 BASED I-STAR PROJECT</title>
 
-  <!-- Bootstrap core CSS -->
-  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Custom fonts for this template -->
-  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <!-- Custom fonts for this template -->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800'
+          rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic'
+          rel='stylesheet' type='text/css'>
 
-  <!-- Plugin CSS -->
-  <!-- Custom styles for this template -->
-  <link href="css/creative.min.css" rel="stylesheet">
+    <!-- Plugin CSS -->
+    <link href="vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
 
+    <!-- Custom styles for this template -->
+    <link href="css/creative.min.css" rel="stylesheet">
+
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <!-- masonry 로딩 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/masonry/4.0.0/masonry.pkgd.min.js"></script>
+    <!-- imagesloaded 로딩 (모든 이미지가 로딩된 후 실행되도록 할때 필요) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.0/imagesloaded.pkgd.min.js"></script>
 </head>
+
+
 
 <body id="page-top">
 
-  <!-- 네비게이션 컴포넌트 -->
-  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+<!-- 네비게이션 컴포넌트 -->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
     <div class="container">
         <img class="img-fluid" src="img/basketicon.png" alt="" width="60px" height="60px">
-      <a class="navbar-brand js-scroll-trigger" href="#page-top">I-STAR</a>
-      <button class="navbar-toggler navbar-toggler-right" type="button"
-      data-toggle="collapse"
-      data-target="#navbarResponsive"
-      aria-controls="navbarResponsive"
-      aria-expanded="false"
-      aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav ml-auto">
-            <!--카드 구매 card.html-->
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="card.html"> 카드 구매 </a>
-          </li>
-            <!--카드 거래 marke.html-->
-          <li class="nav-item">
-            <a class="nav-link js-scroll-trigger" href="market.html"> 카드 거래 </a>
-          </li>
-          <!---->
-            <!--게임시작 game.html-->
-          <li>
-            <!--<form acton="user" method="post" class="btn btn-primary">-->
-              <!---->
-            <!--</form>-->
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">I-STAR</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button"
+                data-toggle="collapse"
+                data-target="#navbarResponsive"
+                aria-controls="navbarResponsive"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <!--카드 구매 card.html-->
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="./card.html"> buy card deck </a>
+                </li>
+                <!--카드 거래 market.html-->
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="./market.html"> card trade market </a>
+                </li>
+                <!---->
+                <!--게임시작 game.html-->
+                <li>
+                    <!--<form acton="user" method="post" class="btn btn-primary">-->
+                    <!---->
+                    <!--</form>-->
 
-            <a class="btn btn-primary" href="./game.html" >START Game</a>
-          </li>
-        </ul>
-      </div>
+                    <a class="btn btn-primary" href="./game.html">START Game</a>
+                </li>
+            </ul>
+        </div>
     </div>
-  </nav>
- <!-- 네비게이션 컴포넌트 끝 -->
+</nav>
+<!-- 네비게이션 컴포넌트 끝 -->
 
- <!-- main 화면 -->
-  <header class="masthead text-center text-white d-flex">
-    <div class="container my-auto" style="background-color: gray; height:540px;">
+<!--계정주소 가져오기-->
+<!-- main 화면 -->
+<header class="masthead text-center text-white d-flex">
+    <div class="container my-auto" style="background-color: #BDBDBD; overflow:scroll; height:500px;">
+        <!-- 내 카드 가져오기 -->
+        <div class="wrap"></div>
+        <script>
+            // 루프를 돌며 이미지를 생성
+            for (var i = 1; i <= 10; i++) {
+                // append 메소드를 사용해서 이미지 추가 이름은 bg_01.jpg 같은 숫자 증가 형태
+                /* $('.wrap').append('<img src="https://biketago.com/img/bg_thumb/bg_' + zeroFill(i, 2) + '.jpg">');--> */
+                $('.wrap').append('<img src="./img/card1.png">');
+                <!--$('.wrap').append('<img src="./img/card'+i+'.png">');-->
+            }
 
-      <div class="mycard">
-        <table border="1">
-          <td> <img src="img/card1.png" alt="카" width="200" height="300"> </td>
-        </table>
-      </div>
+            // wrap 클래스안의 모든 이미지가 로딩되면 masonry 적용
+            $imgs = $('.wrap').imagesLoaded(function () {
+                $imgs.masonry({
+                    itemSelector: 'img', // img 태그를 대상으로 masonry 적용
+                    fitWidth: true,
+                    columnWidth: 10
 
-      <div class="mycard">
-        <table border="1">
-          <td> <img src="img/card2.png" alt="카" width="200" height="300"> </td>
-        </table>
-      </div>
+                });
+            });
 
-      <div class="mycard">
-        <table border="1">
-          <td> <img src="img/card3.png" alt="카" width="200" height="300"> </td>
-        </table>
-      </div>
-
-      <div class="mycard">
-        <table border="1">
-          <td> <img src="img/card1.png" alt="카" width="200" height="300"> </td>
-        </table>
-      </div>
-
-      <div class="mycard">
-        <table border="1">
-          <td id="table_id">  <img src="img/card2.png" alt="카" width="200" height="300"> </td>
-        </table>
-      </div>
-
-      <script>
-
-        
-
-      </script>
-
-
+        </script>
     </div>
-  </header>
+</header>
 
-  <!-- main 화면 -->
-  <input type="button" id="address" onclick="Address();" value="소스보기" style="margin-top:50px; margin-left:100px;">
-  <!-- main 화면 -->
+<!-- main 화면 -->
+<input type="button" id="address" onclick="Address();" value="소스보기" style="margin-top:50px; margin-left:100px;">
+<!-- main 화면 -->
 
 
-  <section id="contact">
+<section id="contact">
     <div class="container">
-      <div class="row">
-        <div class="col-lg-8 mx-auto text-center">
-          <h2 class="section-heading">CONTACT</h2>
-          <hr class="my-4">
-          <p class="mb-5">If you have any questions about blockchain, do not hesitate to contact us.
-            We are ready to support you. We will be happy to answer your questions
-            </p>
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h2 class="section-heading">CONTACT</h2>
+                <hr class="my-4">
+                <p class="mb-5">If you have any questions about blockchain, do not hesitate to contact us.
+                    We are ready to support you. We will be happy to answer your questions
+                </p>
+            </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-4 ml-auto text-center">
-            <a href="https://medium.com/helloiconworld">
-            <img class="img-fluid" src="img/sns1.png" alt="" width="50px" height="50px">
-          </a>
+        <div class="row">
+            <div class="col-lg-4 ml-auto text-center">
+                <a href="https://medium.com/helloiconworld">
+                    <img class="img-fluid" src="img/sns1.png" alt="" width="50px" height="50px">
+                </a>
+            </div>
+            <div class="col-lg-4 mr-auto text-center">
+                <a href="https://github.com/icon-project">
+                    <img class="img-fluid" src="img/sns2.png" alt="" width="50px" height="50px">
+                </a>
+            </div>
+            <div class="col-lg-4 mr-auto text-center">
+                <a href="https://icon.foundation/?lang=en">
+                    <img class="img-fluid" src="img/sns3.png" alt="" width="50px" height="50px">
+                </a>
+            </div>
         </div>
-        <div class="col-lg-4 mr-auto text-center">
-            <a href="https://github.com/icon-project">
-              <img class="img-fluid" src="img/sns2.png" alt="" width="50px" height="50px">
-            </a>
-        </div>
-        <div class="col-lg-4 mr-auto text-center">
-            <a href="https://icon.foundation/?lang=en">
-              <img class="img-fluid" src="img/sns3.png" alt="" width="50px" height="50px">
-            </a>
-        </div>
-      </div>
     </div>
-  </section>
+</section>
 
-  <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Plugin JavaScript -->
-  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
-  <script src="vendor/scrollreveal/scrollreveal.min.js"></script>
-  <script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+<!-- Plugin JavaScript -->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="vendor/scrollreveal/scrollreveal.min.js"></script>
+<script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
 
-  <!-- Custom scripts for this template -->
-  <script src="src/js/creative.min.js"></script>
-  <script src="src/js/main.js"></script>
+<!-- Custom scripts for this template -->
+<script src="src/js/creative.min.js"></script>
+<script src="src/js/main.js"></script>
 </body>
 
 </html>
