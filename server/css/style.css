@@ -90,6 +90,7 @@ ol {
 
 .section-title h2 {
 	font-size: 36px;
+	color: #fefefe;
 }
 
 .set-bg {
@@ -113,7 +114,7 @@ ol {
 .text-white span,
 .text-white li,
 .text-white a {
-	color: #fff;
+	color: #fefefe;
 }
 
 /*---------------------
@@ -871,7 +872,7 @@ ol {
 
 .product-item .pi-links a i {
 	display: inline-block;
-	color: #fefefe;
+	color: #111111;
 }
 
 .product-item .pi-links a.buy-card {
@@ -912,12 +913,12 @@ ol {
 	padding-left: 40px;
 	overflow: hidden;
 	font-weight: 700;
-	color: #111111;
+	color: #fefefe;
 }
 
 .product-item .pi-text p {
 	font-size: 16px;
-	color: #111111;
+	color: #fefefe;
 	margin-bottom: 0;
 }
 
