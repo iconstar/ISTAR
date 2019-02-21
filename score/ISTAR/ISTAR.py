@@ -3,18 +3,22 @@ Programmer    : 김승규, 정해민 - pair programming
 description   : ISTAR SCORE of ICON
 Update Date   : 2018.02.15
 Update        : ADD function(transferFrom, createCard, showAllCard)
+
+cxdacd3169934b4da8ab0141c5f6c2b74ce320fd67
+tbears deploy -m update -o cxdacd3169934b4da8ab0141c5f6c2b74ce320fd67 ../ISTAR
+tbears transfer -k ../keystore_test1 hx08711b77e894c3509c78efbf9b62a85a4354c8df 100e18
 """
 
 
 """
-고민 거리
-
-1. 에러 처리 부분을 어떻게 해야하나??
-  - self._token[0] = 0 ... 처럼 token 의 정보를 처리해야하나? (이토큰이 유효한 것인지?)
-  + 
-  
-2. 토큰들의 속성 정보를 score 저장해야하나?
-3. 경매(auction) 되는 토큰들을 스코어에서 따로 저장해야 하는가?
+# 고민 거리
+# 
+# 1. 에러 처리 부분을 어떻게 해야하나??
+#   - self._token[0] = 0 ... 처럼 token 의 정보를 처리해야하나? (이토큰이 유효한 것인지?)
+#   + 
+#   
+# 2. 토큰들의 속성 정보를 score 저장해야하나?
+# 3. 경매(auction) 되는 토큰들을 스코어에서 따로 저장해야 하는가?
 
 """
 
@@ -35,6 +39,7 @@ class IStarIRC3(IconScoreBase):
 
     def __init__(self, db: IconScoreDatabase) -> None:
         super().__init__(db)
+
         # 모든 토큰
         self._total_token = VarDB("TOKENID", db, value_type=int)
         # 토큰[토큰id] 로 토큰 소유자 계정 받음
@@ -49,7 +54,8 @@ class IStarIRC3(IconScoreBase):
         # 맨 처음은 토큰을 0 개로 지정
 
         # test init total_token = 3
-        self._total_token.set(0)
+        self._total_token.set(3)
+        # self._total_token.set(0)
 
     def on_update(self) -> None:
         super().on_update()
@@ -61,12 +67,14 @@ class IStarIRC3(IconScoreBase):
 
     @external(readonly=True)
     def symbol(self) -> str:
+        Logger.warning("CALL SYMBOL", TAG)
         return "ISX"
 
     @external(readonly=True)
     def balanceOf(self, _owner: Address) -> int:
         count = 0
-        totalCount = self.get_total_token()
+
+        totalCount = self._total_token.get()
 
         for i in range(totalCount):
             if self._token_owner[i] == _owner:
@@ -163,11 +171,15 @@ class IStarIRC3(IconScoreBase):
     # 카드와 카드 속성 생성 기능
     # 가격 정하기
     @external
-    def createCard(self, _grade:int, _player:str):
-        ### 속성 정의
+    def createCard(self, _grade:int):
+        player = ['Bryant', 'Cury', 'Griffin', 'Harden', 'Hayward', 'Irving', 'Jordan', 'Lebron']
+
+        # 속성 변수
         json_property = {}
-        # random 값을 가져오는데 0-100 사이의 값을 받아온
-        json_property['player'] = _player
+
+        ### 속성 정의
+        json_property['player'] = player[int.from_bytes(sha3_256(
+            self.msg.sender.to_bytes() + str(self.block.timestamp).encode() + "run".encode()), 'big') % 8]
         json_property['run'] = int.from_bytes(sha3_256(
             self.msg.sender.to_bytes() + str(self.block.timestamp).encode() + "run".encode()), 'big') % 100
         json_property['power'] = int.from_bytes(sha3_256(
@@ -196,6 +208,7 @@ class IStarIRC3(IconScoreBase):
 
         ####### 토큰 추가 #######
         total_token = self._total_token.get()   # 0
+        Logger.warning(f'totkal_tokne {total_token}', TAG)
         tokenId = total_token                   # 0
 
         ## 토큰에다 속성을 정의
@@ -213,18 +226,86 @@ class IStarIRC3(IconScoreBase):
     @external
     def showAllCard(self):
         totalToken = self._total_token.get()
-
         jsonCardList = []
 
         for i in range(totalToken):
             if self._token_owner[i] == self.msg.sender:
                 jsonCardList.append(self._token[i])
-
         return jsonCardList
 
+    # 추가할지 말지 고민!!
+    @external
+    def showMyCard(self, _owner:Address):
+        totalToken = self._total_token.get()
+        jsonCardList = []
+
+        for i in range(totalToken):
+            if self._token_owner[i] == _owner:
+                jsonCardList.append(self._token[i])
+        return jsonCardList
+
+
+    # 게임실행, 50 % 확률로 이기면 보상을 받고 지면 돈을 잃음
+    @external
+    @payable
+    def startGame(self):
+        amount = self.msg.value
+
+        # 한 게임에 10 ICX 이상 못함
+        if amount <= 0 or amount > 10 * 10 ** 18:
+            # Logger.debug(f'Betting amount {amount} out of range.', TAG)
+            revert(f'Betting amount {amount} out of range.')
+
+        # 스코어에 돈이 모자르면 안함
+        # if (self.icx.get_balance(self.address)) < 2 * amount:
+        #     # Logger.debug(f'Not enough in treasury to make the play.', TAG)
+        #     revert('Not enough in treasury to make the play.')
+
+        win = int.from_bytes(sha3_256(
+            self.msg.sender.to_bytes() + str(self.block.timestamp).encode() + "run".encode()), 'big') % 2
+
+        # Logger.warning(win, TAG)
+        Logger.warning(f"self.address: {self.icx.get_balance(self.address)}", TAG)
+        Logger.warning(f"self.msg.sender: {self.icx.get_balance(self.msg.sender)}", TAG)
+        Logger.warning(f"self.msg.value: {self.msg.value}", TAG)
+        # symbol = self.symbol()
+        cardList = self.showAllCard();
+        Logger.warning(f"showAllCard(): {cardList}", TAG)
+        # 지면 돈뺏고 이기면 내가 낸 돈에 두배 보상
+        if win == 1:
+            # self.icx.transfer(self.msg.sender, self.msg.value*2)
+            self.icx.send(self.msg.sender, 1000000000000000000)
+            Logger.warning("이김", TAG)
+        else:
+            Logger.warning("짐", TAG)
+            # self.icx.transfer(self.msg.sender, self.msg.value)
+
+
+        Logger.warning(f"self.address: {self.icx.get_balance(self.address)}", TAG)
+        Logger.warning(f"self.msg.sender: {self.icx.get_balance(self.msg.sender)}", TAG)
+        Logger.warning(f"self.msg.value: {self.msg.value}", TAG)
+        # avg = cardList / len(cardList)
+
     # 게임 실헹 시
-
-
+    @payable
+    def fallback(self):
+        pass
+        # amount = self.msg.value
+        #
+        # # Bets must be under 10 ICX
+        # if amount <= 0 or amount >= 10 * 10 ** 18:
+        #     Logger.debug(f'Betting amount {amount} out of range.', TAG)
+        #     revert(f'Betting amount {amount} out of range.')
+        #
+        #
+        # Logger.warning(self.icx.get_balance(self.msg.sender), TAG)
+        # Logger.warning(self.icx.get_balance(self.address), TAG)
+        #
+        # # self.icx.transfer(self.msg.sender, amount)
+        #
+        # Logger.warning(self.icx.get_balance(self.msg.sender), TAG)
+        # Logger.warning(self.icx.get_balance(self.address), TAG)
+        # Logger.warning(TAG)
 
     # ******************* Customer Function *******************
     # 나중에 함수명 바꾸기 - ####
@@ -235,13 +316,9 @@ class IStarIRC3(IconScoreBase):
         self._token_owner[1] = Address.from_string("hxe7af5fcfd8dfc67530a01a0e403882687528dfcb")
         self._token_owner[2] = Address.from_string("hx08711b77e894c3509c78efbf9b62a85a4354c8df")
 
-        self._token[0] = 0
-        self._token[1] = 1
-        self._token[2] = 2
-
-    @external
-    def get_total_token(self):
-        return self._total_token.get()
+        self._token[0] = '{"player": "Bryant", "run": 304, "power": 325, "dribble": 328}'
+        self._token[1] = '{"player": "Hayward", "run": 320, "power": 394, "dribble": 387}'
+        self._token[2] = '{"player": "Griffin", "run": 306, "power": 355, "dribble": 390}'
 
     @external(readonly=True)
     def getProperty(self, _tokenId:int)->str:

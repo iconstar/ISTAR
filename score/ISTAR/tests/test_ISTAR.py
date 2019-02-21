@@ -7,12 +7,19 @@ Update        : ADD TEST_FUNCTION, TEST_FUNCTION(balanceOf, getApproved, approve
 
 import os
 
-from iconsdk.builder.transaction_builder import DeployTransactionBuilder, CallTransactionBuilder
+from iconsdk.builder.transaction_builder import (
+    DeployTransactionBuilder,
+    CallTransactionBuilder,
+    TransactionBuilder
+)
+from iconsdk.providers.http_provider import HTTPProvider
 from iconsdk.builder.call_builder import CallBuilder
 from iconsdk.libs.in_memory_zip import gen_deploy_data_content
 from iconsdk.signed_transaction import SignedTransaction
-
+from iconsdk.icon_service import IconService
 from tbears.libs.icon_integrate_test import IconIntegrateTestBase, SCORE_INSTALL_ADDRESS
+
+# iconAmount = IconService.iconAmount
 
 import ast
 
@@ -28,10 +35,10 @@ class TestIStarIRC3(IconIntegrateTestBase):
         super().setUp()
 
         self.icon_service = None
-        # if you want to send request to network, uncomment next line and set self.TEST_HTTP_ENDPOINT_URI_V3
-        # self.icon_service = IconService(HTTPProvider(self.TEST_HTTP_ENDPOINT_URI_V3))
+        # self.icon_service = IconService(HTTPProvider("http://127.0.0.1:9000"))
 
         # install SCORE
+        # self._score_address = "cx37d5799e548048ba19566e3d018e77a9392b1cc2"
         self._score_address = self._deploy_score()['scoreAddress']
 
     def _deploy_score(self, to: str = SCORE_INSTALL_ADDRESS) -> dict:
@@ -59,10 +66,11 @@ class TestIStarIRC3(IconIntegrateTestBase):
         return tx_result
 
     def test_score_update(self):
+        pass
         # update SCORE
-        tx_result = self._deploy_score(self._score_address)
+        # tx_result = self._deploy_score(self._score_address)
 
-        self.assertEqual(self._score_address, tx_result['scoreAddress'])
+        # self.assertEqual(self._score_address, tx_result['scoreAddress'])
 
     # ******************* IRC3 Test *******************
     def test_name(self):
@@ -396,12 +404,10 @@ class TestIStarIRC3(IconIntegrateTestBase):
         print("balanceOf : ", response)
         ####################################################
 
-
     # ******************* ISTAR Test *******************
     def test_createCard(self):
         params = {
             "_grade" : 1,
-            "_player" : "jorden"
         }
 
         transaction = CallTransactionBuilder() \
@@ -482,21 +488,151 @@ class TestIStarIRC3(IconIntegrateTestBase):
 
     # ******************* Customer Test *******************
     def test_test(self):
-        param = {
-            "_grade":3
+        #     ################### TEST_TOKEN ADD ###################
+        params = {
+            "_grade":"1"
         }
-
-        call_ownerOf = CallBuilder() \
-            .from_("hx0000000000000000000000000000000000000011") \
+        transaction = CallTransactionBuilder() \
+            .from_("hxe7af5fcfd8dfc67530a01a0e403882687528dfcb") \
             .to(self._score_address) \
-            .method("test") \
-            .params(param) \
+            .step_limit(10_000_000) \
+            .nid(3) \
+            .nonce(100) \
+            .method("createCard") \
+            .params(params) \
             .build()
 
-        response = self.process_call(call_ownerOf, self.icon_service)
-        print("hash : ", response)
+        # Returns the signed transaction object having a signature
+        signed_transaction = SignedTransaction(transaction, self._test1)
+        # print("signed_transaction: ", signed_transaction)
+        self.process_transaction(signed_transaction, self.icon_service)
+        self.process_transaction(signed_transaction, self.icon_service)
+
+        call_balanceOf = CallBuilder() \
+            .from_("hxe7af5fcfd8dfc67530a01a0e403882687528dfcb") \
+            .to(self._score_address) \
+            .method("showAllCard") \
+            .build()
+
+        response = self.process_call(call_balanceOf, self.icon_service)
+        print("ownerOf : ", response)
+
+    def test_transferss(self):
+        transaction = TransactionBuilder() \
+            .from_(self._test1.get_address()) \
+            .to(self._score_address) \
+            .value(150000000) \
+            .step_limit(10000000) \
+            .nid(3) \
+            .nonce(100) \
+            .build()
+
+        #     # Returns the signed transaction object having a signature
+        signed_transaction = SignedTransaction(transaction, self._test1)
+        #     # print("signed_transaction: ", signed_transaction)
+        self.process_transaction(signed_transaction, self.icon_service)
+        self.process_transaction(signed_transaction, self.icon_service)
+        # result = self.process_transaction(signed_transaction, self.icon_service)
+        # print("result: ",result)
+
+    def test_startGame(self):
+        ################### TEST_TOKEN ADD ###################
+        transaction = CallTransactionBuilder() \
+            .from_(self._test1.get_address()) \
+            .to(self._score_address) \
+            .step_limit(10_000_000) \
+            .nid(3) \
+            .nonce(100) \
+            .method("init_add") \
+            .build()
+
+        # Returns the signed transaction object having a signature
+        signed_transaction = SignedTransaction(transaction, self._test1)
+        # print("signed_transaction: ", signed_transaction)
+        self.process_transaction(signed_transaction, self.icon_service)
+
+        ################### _test1 / balanceOf ###################
+
+        params = {
+            "_tokenId": "2",
+        }
+
+        call_balanceOf = CallBuilder() \
+            .from_(self._test1.get_address()) \
+            .to(self._score_address) \
+            .method("getProperty") \
+            .params(params) \
+            .build()
+
+        response = self.process_call(call_balanceOf, self.icon_service)
+        print("getProperty : ", response)
+
+        params = {
+            # "_owner" : "hx08711b77e894c3509c78efbf9b62a85a4354c8df",
+            "_owner": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb",
+            # hxe7af5fcfd8dfc67530a01a0e403882687528dfcb
+        }
+        call_balanceOf = CallBuilder() \
+            .from_(self._test1.get_address()) \
+            .to(self._score_address) \
+            .method("balanceOf") \
+            .params(params) \
+            .build()
+
+        response = self.process_call(call_balanceOf, self.icon_service)
+        print("balanceOf : ", response)
 
 
+        call_balanceOf = CallBuilder() \
+            .from_(self._test1.get_address()) \
+            .to(self._score_address) \
+            .method("showAllCard") \
+            .build()
+
+        response = self.process_call(call_balanceOf, self.icon_service)
+        print("showAllCard : ", response)
+
+        params = {
+            "_owner": "hxe7af5fcfd8dfc67530a01a0e403882687528dfcb",
+        }
+
+        call_balanceOf = CallBuilder() \
+            .from_(self._test1.get_address()) \
+            .to(self._score_address) \
+            .method("showMyCard") \
+            .params(params) \
+            .build()
+
+        response = self.process_call(call_balanceOf, self.icon_service)
+        print("showMyCard : ", response)
+
+
+
+
+        # transaction = CallTransactionBuilder() \
+        #     .from_(self._test1.get_address()) \
+        #     .to(self._score_address) \
+        #     .value(2000000000000000000) \
+        #     .step_limit(10_000_000) \
+        #     .nid(3) \
+        #     .nonce(100) \
+        #     .method("startGame") \
+        #     .build()
+        #
+        # print("self._test1.get_address(): ",self._test1.get_address())
+        #
+        # # Returns the signed transaction object having a signature
+        # signed_transaction = SignedTransaction(transaction, self._test1)
+        # # print("signed_transaction: ", signed_transaction)
+        # self.process_transaction(signed_transaction, self.icon_service)
+
+
+        # self.process_call(call_balanceOf, self.icon_service)
+        # self.process_call(call_balanceOf, self.icon_service)
+        # self.process_call(call_balanceOf, self.icon_service)
+        # self.process_call(call_balanceOf, self.icon_service)
+
+        # print("get_total_token : ", response)
 
     # def test_get_total_token(self):
     #     ################### TEST_TOKEN ADD ###################
