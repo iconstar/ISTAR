@@ -2,9 +2,9 @@ var path = require('path');
 
 module.exports = {
 	devtool: "cheap-eval-source-map",
-	entry: ['babel-polyfill', './public/src/js/cardAdd.js'],	// modify path
+	entry: ['babel-polyfill', './public/src/js/main.js'],	// modify path
 	output: {
-		filename: 'bundleCardAdd.js',	// modify path
+		filename: 'bundleMain.js',	// modify path
 		path: "/Users/SG/istar/server/public/src/js/bundle"// modify path
 	},
 	module: {

@@ -16,7 +16,7 @@ function eventHandler(event) {
         case "RESPONSE_ADDRESS":
             console.log("payload: "+payload)
             if(payload) {
-                alert(payload);
+                // alert(payload);
                 location.href = "./main.html?address="+payload;
             }
             responseAddress.innerHTML = "> Selected ICX Address : " + payload;
