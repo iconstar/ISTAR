@@ -2,10 +2,7 @@ var iconService = window['icon-sdk-js'];
 var IconAmount = iconService.IconAmount;
 var IconConverter = iconService.IconConverter;
 var IconBuilder = iconService.IconBuilder;
-//var requestHasAccount = document.getElementById("request-has-account");
-//var responseHasAccount = document.getElementById("response-has-account");
-//var requestHasAddress = document.getElementById("request-has-address");
-//var requestHasAddressData = document.getElementById("request-has-address-data");
+
 var responseHasAddress = document.getElementById("response-has-address");
 var requestAddress = document.getElementById("request-address");
 var responseAddress = document.getElementById("response-address");
@@ -20,6 +17,7 @@ var scoreData = document.getElementById("score-data");
 var signingData = document.getElementById("signing-data");
 var requestSigning = document.getElementById("request-signing");
 var responseSigning = document.getElementById("response-signing");
+
 window.addEventListener("ICONEX_RELAY_RESPONSE", eventHandler, false);
 // type and payload are in event.detail
 function eventHandler(event) {
@@ -53,6 +51,7 @@ function eventHandler(event) {
         default:
     }
 }
+
 function setRequestScoreForm() {
     var data = new FormData(requestScoreForm);
     var type = '';
@@ -101,9 +100,6 @@ function setRequestScoreForm() {
             console.log(callTransactionData)
             break;
         case 'icx-transfer':
-
-            address = get가져온다hx79e7f88e6186e72d86a1b3f1c4e29bd4ae00ff53
-
             var icxTransactionBuilder = new IconBuilder.IcxTransactionBuilder;
             var icxTransferData = icxTransactionBuilder
                 .from("hx79e7f88e6186e72d86a1b3f1c4e29bd4ae00ff53")
@@ -114,6 +110,7 @@ function setRequestScoreForm() {
                 .version(IconConverter.toBigNumber(3))
                 .stepLimit(IconConverter.toBigNumber(100000))
                 .build();
+
             scoreData.value = JSON.stringify({
                 "jsonrpc": "2.0",
                 "method": "icx_sendTransaction",
