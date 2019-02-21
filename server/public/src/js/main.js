@@ -1,7 +1,3 @@
-// 실제 파일
-
-// import IconService from 'icon-sdk-js';
-// import 'babel-polyfill';
 import IconService, { IconAmount, IconConverter, HttpProvider, IconWallet, IconBuilder, SignedTransaction } from 'icon-sdk-js';
 
 // httpProvider = new HttpProvider();
@@ -10,50 +6,85 @@ const iconService = new IconService(httpProvider);
 
 const CallBuilder = IconService.IconBuilder.CallBuilder;
 
-// cx37d5799e548048ba19566e3d018e77a9392b1cc2
-// cx6ad3a41000e745a811132501dbc9cc96c67ac6dc
+// 커스텀 변수
+var score_to = 'cxdacd3169934b4da8ab0141c5f6c2b74ce320fd67';
+var addr_to = 'hxc22ae778606f626c03815a5adc41da4a1dad6b4f';
+var address = getParameterByAddress('address');
 
+myCard();
+// var cardCount = myCard();
+// console.log("cardCount: "+cardCount);
+// images(cardCount);
 
-var address = getParameterByName('address');
-
-
+// SCORE 랑 통신하여 소유자의 카드갯수를 반환
 async function myCard() {
     var call = new CallBuilder()
         .from(address)
-        .to('cx37d5799e548048ba19566e3d018e77a9392b1cc2')
-        .method('balanceOf')
-        .params({ 
-            "_owner":address
-        })
+        .to(score_to)
+        .method('showAllCard')
         .build()
 
-    let balanceOf = await iconService.call(call).execute(); 
-    console.log("balanceOf: "+balanceOf);
-    return balanceOf;
-}
+    let myCards = await iconService.call(call).execute(); 
+    console.log("showAllCard: "+myCards);
 
-images();
-function images() {
+    images(myCards)
 
-    for (var i = 1; i <= 10; i++) {
-        // append 메소드를 사용해서 이미지 추가 이름은 bg_01.jpg 같은 숫자 증가 형태
-        $('.wrap').append('<img src="../../img/1.jpg">');
-    }
+    // var call = new CallBuilder()
+    //     .from(address)
+    //     .to('cx37d5799e548048ba19566e3d018e77a9392b1cc2')
+    //     .method('showAllCard')
+    //     .params({ 
+    //         "_owner":address
+    //     })
+    //     .build()
+
+    // let balanceOf = await iconService.call(call).execute(); 
+    // console.log("balanceOf: "+balanceOf);
     
 
-    // // wrap 클래스안의 모든 이미지가 로딩되면 masonry 적용
-    // images = $('.wrap').imagesLoaded(function () {
-    //     images.masonry({
-    //         itemSelector: 'img', // img 태그를 대상으로 masonry 적용
-    //         fitWidth: true,
-    //         columnWidth: 10
-    //     });
-    // });
+    // images(balanceOf)
 }
 
-function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+// 자신이 소유한 카드들을 보여주는 함수
+function images(cards) {
+    // Bryant_N / Cury_N / Griffin_N / Harden_N / Hayward_N / Irving_N / Jordan_N / Lebron_N
+ 
+    // player = ['Bryant', 'Cury', 'Griffin', 'Harden', 'Hayward', 'Irving', 'Jordan', 'Lebron' ]
+
+    var cardCount = cards.length; 
+    var card_property;
+    var grade;
+    for(var i=0; i<cardCount; i++) {
+        var card = cards[i];
+        console.log(card.replace(/\'/gi, "\""));
+        var card_str = card.replace(/\'/gi, "\"");
+
+        console.log(typeof(card_str));
+        card_property = JSON.parse(card_str);
+        console.log(typeof(card_property));
+        console.log(card_property.player);
+
+        if(card_property.run >= 300) {
+            grade = 'S';
+        } else if ( card_property.run >= 200) {
+            grade = "R";
+        } else {
+            grade = 'N';
+        }
+
+        // $('.wrap').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png">');
+        $('.wrap').append('<img src="../../img/player/'+card_property.player+'.png">');
+        // console.log(card_property.run);
+        // console.log(card_property.power);
+
+    }
+    // console.log("card_property="+card_property);
+}
+
+// get방식으로 넘어온 address 를 리턴함
+function getParameterByAddress(address) {
+    var address = address.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + address + "=([^&#]*)"),
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }

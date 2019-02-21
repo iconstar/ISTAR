@@ -40,7 +40,7 @@
 <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
     <div class="container">
         <img class="img-fluid" src="img/basketicon.png" alt="" width="60px" height="60px">
-        <a class="navbar-brand js-scroll-trigger" href="#page-top">I-STAR</a>
+        <a class="navbar-brand js-scroll-trigger" href="./index.html">I-STAR</a>
         <button class="navbar-toggler navbar-toggler-right" type="button"
                 data-toggle="collapse"
                 data-target="#navbarResponsive"
@@ -54,16 +54,44 @@
             <ul class="navbar-nav ml-auto">
                 <!--카드 구매 card.html-->
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="./card.html"> buy card deck </a>
+                    <a id="buyCard" class="nav-link js-scroll-trigger" onclick="buyCard()">
+                        <!-- js 이름 생각하기 -->
+                        <script src="./src/js/address.js"> </script> 
+                        buy card deck 
+                    </a>
                 </li>
                 <!--카드 거래 market.html-->
                 <li class="nav-item">
-                    <a class="nav-link js-scroll-trigger" href="./market.html"> card trade market </a>
+                    <a class="nav-link js-scroll-trigger" onclick="goMarket()">
+                        <!-- js 이름 생각하기 -->
+                        <script src="./src/js/address.js"> </script>    
+                        card trade market 
+                    </a>
                 </li>
                 <!---->
-                <!--게임시작 game.html-->
+                <!--게임시작 game.html/ win.html, lose.html 호출 부분-->
                 <li>
-                    <a class="btn btn-primary" href="./game.html">START Game</a>
+                    <a class="btn btn-primary" onclick="getRandom()" style="color: #fefefe">game start</a>
+                    <script language="javascript">
+                        /* 확률 반 반 이겼을때 gif, 졌을때 git 출력 */
+                        function showWinPop() {
+                            window.open("win.html", "a", "width=500, height=500, left=520, top=100");
+                            return console.log("win, You earned an icx.");
+                        }
+
+                        function showlosePopup() {
+                            window.open("lose.html", "a", "width=500, height=500, left=520, top=100");
+                            return console.log("lose, At the next time.");
+                        }
+
+                        function getRandom() {
+                            var num = Math.floor(Math.random() * 100) + 1;
+                            console.log(num);
+
+                            if (num >= 49) return showWinPop();
+                            else if (num <= 49) return showlosePopup();
+                        }
+                    </script>
                 </li>
             </ul>
         </div>
@@ -126,6 +154,7 @@
 <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 <script src="vendor/scrollreveal/scrollreveal.min.js"></script>
 <script src="vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+
 
 </body>
 
