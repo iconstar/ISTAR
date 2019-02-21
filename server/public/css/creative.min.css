@@ -402,4 +402,45 @@ header.masthead p {
     box-shadow: 0 0 0 .2rem rgba(31, 175, 201) !important
 }
 
+.flip-container {
+    perspective: 500px;
+   border:2px solid rgba(0,0,0,0) !important;
+}
+
+/* front pane, placed above back */
+.front{
+  z-index:2;
+  /* for firefox 31 */
+  transform: rotateY(0deg);
+ /*background:url('http://opengameart.org/sites/default/files/styles/medium/public/king_of_hearts2.png') no-repeat;*/
+  background-size:100% 100%;
+}
+/* back, initially hidden pane */
+.back {
+    transform: rotateY(180deg);
+ /*background:url('http://opengameart.org/sites/default/files/styles/medium/public/card%20back%20purple.png') no-repeat;*/
+  background-size:100% 100%;
+}
+
+/* flip the pane when hovered */
+.flip-container:hover .flipper, .flip-container.hover .flipper {
+    transform: rotateY(180deg);
+}
+
+.flip-container, .front, .back {
+    width: 200px;
+    height: 390px; solid lightgray;*/
+}
+/* flip speed goes here */
+.flipper {
+    transition: 0.6s;
+   /* 하위요소에 3D 좌표값 지정 */
+    transform-style: preserve-3d;
+    position: relative;
+}
+/* hide back of pane during swap */
+.front, .back{
+  position: absolute;
+  backface-visibility:hidden;
+}
 /* 커스터마이징 */
