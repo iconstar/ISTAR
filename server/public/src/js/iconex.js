@@ -1,7 +1,7 @@
+
 var requestAddress = document.getElementById("request-address");
 var responseAddress = document.getElementById("response-address");
 
-var address = getParameterByName('address');
 
 
 window.addEventListener("ICONEX_RELAY_RESPONSE", eventHandler, false);
@@ -32,19 +32,7 @@ requestAddress.onclick = function () {
     }))
 };
 
-// 
-function getParameterByName(name) {
-    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
-    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-}
 
-
-function Address() {
-    // document.write(address);
-    return alert(address)
-}
 
 function images() {
     return 'to';

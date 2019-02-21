@@ -230,11 +230,18 @@ header.masthead p {
 }
 
 
-.wrap {
+/* .wrap {
     max-width: 600px;
-}
+} */
 
 .wrap img {
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 5px;
+    margin-left: 0px;
+    width: 25%;
+}
+/* .wrap img {
     margin-top: 5px;
     margin-right: auto;
     margin-bottom: 5px;
@@ -242,7 +249,7 @@ header.masthead p {
     padding: 10px;
     padding-left: 7px;
     width: 40%;
-}
+}  */
 
 .modal-header {
     color: #f8f9fa;
