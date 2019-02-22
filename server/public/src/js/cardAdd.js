@@ -54,7 +54,7 @@ function eventHandler(event) {
                 alert("error")
             } else {
                 console.log("grade is: "+grade);
-                purchaseCard(grade);
+                // purchaseCard(grade);
             }
             break;
         case "CANCEL_JSON-RPC":
@@ -73,21 +73,25 @@ function eventHandler(event) {
 // 노멀카드 구매시
 nomalCard.onclick = function() {
     grade = String(1);
-    var icxTransactionBuilder = new IconBuilder.IcxTransactionBuilder;
-    var icxTransferData = icxTransactionBuilder
+
+    var callTransactionBuilder = new IconBuilder.CallTransactionBuilder;
+    var callTransactionData = callTransactionBuilder
         .from(address)
-        .to(addr_to)
+        .to(score_to)
         .nid(IconConverter.toBigNumber(3))
         .value(IconAmount.of(1, IconAmount.Unit.ICX).toLoop())
         .timestamp((new Date()).getTime() * 1000)
+        .stepLimit(IconConverter.toBigNumber(10000000))
         .version(IconConverter.toBigNumber(3))
-        .stepLimit(IconConverter.toBigNumber(1000000))
+        .method('createCard')
+        .params({
+            "_grade": grade
+        })
         .build();
-    
     var score_sdk = JSON.stringify( {
         "jsonrpc":"2.0",
         "method":"icx_sendTransaction",
-        "params":IconConverter.toRawTransaction(icxTransferData),
+        "params":IconConverter.toRawTransaction(callTransactionData),
         "id":50889
     })
 
@@ -99,49 +103,30 @@ nomalCard.onclick = function() {
             payload: parsed,
         }
     })); 
-   
-
-
-   
-    
-    // console.log("score_sdk: "+score_sdk)
-
-    // var parsed = {"jsonrpc":"2.0","method":"icx_sendTransaction","params":
-    // {"to":"hx79e7f88e6186e72d86a1b3f1c4e29bd4ae00ff53","from":"hx08711b77e894c3509c78efbf9b62a85a4354c8df",
-    // "stepLimit":"0x186a0","nid":"0x3","version":"0x3","timestamp":"0x5824e2938f1b8","value":"0xde0b6b3a7640000"},
-    // "id":50889}
-
-    // window.dispatchEvent(new CustomEvent('ICONEX_RELAY_REQUEST', {
-    //     detail: {
-    //         type: 'REQUEST_JSON-RPC',
-    //         payload: parsed
-    //     }
-    // }))
-
-    // console.log("test");
-    // transaction(1);
-    // myCard("1")
 }
 
 // 레어카드 구매시
 rareCard.onclick = function() {
     grade = String(2);
 
-    var icxTransactionBuilder = new IconBuilder.IcxTransactionBuilder;
-    var icxTransferData = icxTransactionBuilder
+    var callTransactionBuilder = new IconBuilder.CallTransactionBuilder;
+    var callTransactionData = callTransactionBuilder
         .from(address)
-        .to(addr_to)
+        .to(score_to)
         .nid(IconConverter.toBigNumber(3))
         .value(IconAmount.of(2, IconAmount.Unit.ICX).toLoop())
         .timestamp((new Date()).getTime() * 1000)
+        .stepLimit(IconConverter.toBigNumber(10000000))
         .version(IconConverter.toBigNumber(3))
-        .stepLimit(IconConverter.toBigNumber(1000000))
+        .method('createCard')
+        .params({
+            "_grade": grade
+        })
         .build();
-    
     var score_sdk = JSON.stringify( {
         "jsonrpc":"2.0",
         "method":"icx_sendTransaction",
-        "params":IconConverter.toRawTransaction(icxTransferData),
+        "params":IconConverter.toRawTransaction(callTransactionData),
         "id":50889
     })
 
@@ -150,7 +135,7 @@ rareCard.onclick = function() {
     window.dispatchEvent(new CustomEvent('ICONEX_RELAY_REQUEST', {
         detail: {
             type: 'REQUEST_JSON-RPC',
-            payload: parsed
+            payload: parsed,
         }
     })); 
 }
@@ -159,21 +144,24 @@ rareCard.onclick = function() {
 UniqueCard.onclick = function() {
     grade = String(3);
 
-    var icxTransactionBuilder = new IconBuilder.IcxTransactionBuilder;
-    var icxTransferData = icxTransactionBuilder
+    var callTransactionBuilder = new IconBuilder.CallTransactionBuilder;
+    var callTransactionData = callTransactionBuilder
         .from(address)
-        .to(addr_to)
+        .to(score_to)
         .nid(IconConverter.toBigNumber(3))
         .value(IconAmount.of(3, IconAmount.Unit.ICX).toLoop())
         .timestamp((new Date()).getTime() * 1000)
+        .stepLimit(IconConverter.toBigNumber(10000000))
         .version(IconConverter.toBigNumber(3))
-        .stepLimit(IconConverter.toBigNumber(1000000))
+        .method('createCard')
+        .params({
+            "_grade": grade
+        })
         .build();
-    
     var score_sdk = JSON.stringify( {
         "jsonrpc":"2.0",
         "method":"icx_sendTransaction",
-        "params":IconConverter.toRawTransaction(icxTransferData),
+        "params":IconConverter.toRawTransaction(callTransactionData),
         "id":50889
     })
 
@@ -187,25 +175,6 @@ UniqueCard.onclick = function() {
     })); 
 }
 
-// 카드구매함수 자신의 주소로 카드구매함
-async function purchaseCard(_grade) {
-    var callTransaction = new CallTransactionBuilder()
-        .from(address)
-        .to(score_to)
-        .nid(IconConverter.toBigNumber(3))
-        .stepLimit(IconConverter.toBigNumber(10000000))
-        .timestamp((new Date()).getTime() * 1000)
-        .version(IconConverter.toBigNumber(3))
-        .method('createCard')
-        .params({
-            "_grade":_grade
-        })
-        .build();        
-        
-    const SignedTransaction = new signedTransaction(callTransaction, iconWallet.loadPrivateKey("5c2e41d402a9b5c8c468d5c309129cd48a07abf3be8c4d8ee9f9e71f29c4d040"));
-    const txHash = await iconService.sendTransaction(SignedTransaction).execute();
-    console.log(txHash)
-}
 
 // get방식으로 넘어온 address 를 리턴함
 function getParameterByAddress(address) {
@@ -217,9 +186,54 @@ function getParameterByAddress(address) {
 
 
 
+// 카드구매함수 자신의 주소로 카드구매함
+// async function purchaseCard(_grade) {
+//     var callTransaction = new CallTransactionBuilder()
+//         .from(address)
+//         .to(score_to)
+//         // .value(10000000000000000000)
+//         .nid(IconConverter.toBigNumber(3))
+//         .stepLimit(IconConverter.toBigNumber(10000000))
+//         .timestamp((new Date()).getTime() * 1000)
+//         .version(IconConverter.toBigNumber(3))
+//         .method('createCard')
+//         .params({
+//             "_grade":_grade
+//         })
+//         .build();        
+        
+//     const SignedTransaction = new signedTransaction(callTransaction, iconWallet.loadPrivateKey("5c2e41d402a9b5c8c468d5c309129cd48a07abf3be8c4d8ee9f9e71f29c4d040"));
+//     const txHash = await iconService.sendTransaction(SignedTransaction).execute();
+//     console.log(txHash)
+// }
 
 
 
+// var icxTransactionBuilder = new IconBuilder.IcxTransactionBuilder;
+// var icxTransferData = icxTransactionBuilder
+//     .from(address)
+//     .to(addr_to)
+//     .nid(IconConverter.toBigNumber(3))
+//     .value(IconAmount.of(2, IconAmount.Unit.ICX).toLoop())
+//     .timestamp((new Date()).getTime() * 1000)
+//     .version(IconConverter.toBigNumber(3))
+//     .stepLimit(IconConverter.toBigNumber(1000000))
+//     .build();
 
+// var score_sdk = JSON.stringify( {
+//     "jsonrpc":"2.0",
+//     "method":"icx_sendTransaction",
+//     "params":IconConverter.toRawTransaction(icxTransferData),
+//     "id":50889
+// })
+
+// var parsed = JSON.parse(score_sdk)
+
+// window.dispatchEvent(new CustomEvent('ICONEX_RELAY_REQUEST', {
+//     detail: {
+//         type: 'REQUEST_JSON-RPC',
+//         payload: parsed
+//     }
+// })); 
 
 

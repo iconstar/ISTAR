@@ -21,6 +21,11 @@ function buyCard() {
     location.href = "./card.html?address="+address;
 }
 
+function goGame() {
+    var address = getParameterByAddress("address");
+    location.href = "./gamepage.html?address="+address;
+}
+
 // get방식으로 넘어온 address 를 리턴함
 function getParameterByAddress(address) {
     var address = address.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
