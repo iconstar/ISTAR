@@ -24,7 +24,7 @@ async function myCard() {
         .method('showAllCard')
         .build()
 
-    let myCards = await iconService.call(call).execute(); 
+    let myCards = await iconService.call(call).execute();
     console.log("showAllCard: "+myCards);
 
     images(myCards)
@@ -40,7 +40,7 @@ async function myCard() {
 
     // let balanceOf = await iconService.call(call).execute(); 
     // console.log("balanceOf: "+balanceOf);
-    
+
 
     // images(balanceOf)
 }
@@ -48,10 +48,10 @@ async function myCard() {
 // 자신이 소유한 카드들을 보여주는 함수
 function images(cards) {
     // Bryant_N / Cury_N / Griffin_N / Harden_N / Hayward_N / Irving_N / Jordan_N / Lebron_N
- 
+
     // player = ['Bryant', 'Cury', 'Griffin', 'Harden', 'Hayward', 'Irving', 'Jordan', 'Lebron' ]
 
-    var cardCount = cards.length; 
+    var cardCount = cards.length;
     var card_property;
     var grade;
     for(var i=0; i<cardCount; i++) {
@@ -72,10 +72,18 @@ function images(cards) {
             grade = 'N';
         }
 
-        // $('.wrap').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png">');
-        $('.wrap').append('<img src="../../img/player/'+card_property.player+'.png">');
-        // console.log(card_property.run);
-        // console.log(card_property.power);
+        ㄴ
+
+        $('.front').append('<img src="../../img/player/Curry_N.png">');
+        $('.back').append('<img src="../../img/player/Curry_N_back.png">');
+
+        $('.wrap').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png">');
+
+        $('.front').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png">');
+        $('.back').append('<img src="../../img/player/'+card_property.player+'_'+grade+'_back.png">');
+
+        console.log(card_property.run);
+        console.log(card_property.power);
 
     }
     // console.log("card_property="+card_property);
