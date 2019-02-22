@@ -48,14 +48,15 @@ class IStarIRC3(IconScoreBase):
         self._approve_address = DictDB("APPROVED_ADDRESS", db, value_type=Address)
         ## token 저장하는 DB - 이거는 에러 처리를 위해 생성! 과연 이게 필요한가?
         self._token = DictDB("TOKEN", db, value_type=str)
+        self._game_result = DictDB("GAME_REUSLT", db, value_type=int)
 
     def on_install(self) -> None:
         super().on_install()
         # 맨 처음은 토큰을 0 개로 지정
 
         # test init total_token = 3
-        self._total_token.set(3)
-        # self._total_token.set(0)
+        # self._total_token.set(3)
+        self._total_token.set(0)
 
     def on_update(self) -> None:
         super().on_update()
@@ -67,7 +68,6 @@ class IStarIRC3(IconScoreBase):
 
     @external(readonly=True)
     def symbol(self) -> str:
-        Logger.warning("CALL SYMBOL", TAG)
         return "ISX"
 
     @external(readonly=True)
@@ -166,11 +166,10 @@ class IStarIRC3(IconScoreBase):
 
     #******************* ISTAR Function *******************
 
-    ####### 돈 빼는거 처리
-    #### 게임!!!
     # 카드와 카드 속성 생성 기능
     # 가격 정하기
     @external
+    @payable
     def createCard(self, _grade:int):
         player = ['Bryant', 'Cury', 'Griffin', 'Harden', 'Hayward', 'Irving', 'Jordan', 'Lebron']
 
@@ -205,6 +204,8 @@ class IStarIRC3(IconScoreBase):
             # rare grade
         else:
             raise IconScoreException("createCard: ", "뒤질래? 누가 해킹하래? 누가 데이터 변조하래 / 이거 블록체인이야!!")
+
+
 
         ####### 토큰 추가 #######
         total_token = self._total_token.get()   # 0
@@ -248,64 +249,104 @@ class IStarIRC3(IconScoreBase):
     # 게임실행, 50 % 확률로 이기면 보상을 받고 지면 돈을 잃음
     @external
     @payable
-    def startGame(self):
-        amount = self.msg.value
+    def startGame(self, _time:str):
+        # amount = self.msg.value
 
-        # 한 게임에 10 ICX 이상 못함
-        if amount <= 0 or amount > 10 * 10 ** 18:
-            # Logger.debug(f'Betting amount {amount} out of range.', TAG)
-            revert(f'Betting amount {amount} out of range.')
+        # 넘어온 시간 데이터를 해쉬화 - 키 + msg.sender
+        ## msg.sender는 추가하기
+        hash_time = sha3_256(str(_time).encode())
 
-        # 스코어에 돈이 모자르면 안함
-        # if (self.icx.get_balance(self.address)) < 2 * amount:
-        #     # Logger.debug(f'Not enough in treasury to make the play.', TAG)
-        #     revert('Not enough in treasury to make the play.')
+        # 오류 처리
+        # # 한 게임에 10 ICX 이상 못함
+        # if amount <= 0 or amount > 10 * 10 ** 18:
+        #     # Logger.debug(f'Betting amount {amount} out of range.', TAG)
+        #     revert(f'Betting amount {amount} out of range.')
+        #
+        # # 스코어에 돈이 모자르면 안함
+        # # if (self.icx.get_balance(self.address)) < 2 * amount:
+        # #     # Logger.debug(f'Not enough in treasury to make the play.', TAG)
+        # #     revert('Not enough in treasury to make the play.')
+        #
+        game_property = int.from_bytes(sha3_256(
+            self.msg.sender.to_bytes() + str(self.block.timestamp).encode() + "run".encode()), 'big') % 100
 
-        win = int.from_bytes(sha3_256(
-            self.msg.sender.to_bytes() + str(self.block.timestamp).encode() + "run".encode()), 'big') % 2
+        # Logger.warning(f"self.address: {self.icx.get_balance(self.address)}", TAG)
+        # Logger.warning(f"self.msg.sender: {self.icx.get_balance(self.msg.sender)}", TAG)
+        # Logger.warning(f"self.msg.value: {self.msg.value}", TAG)
 
-        # Logger.warning(win, TAG)
-        Logger.warning(f"self.address: {self.icx.get_balance(self.address)}", TAG)
-        Logger.warning(f"self.msg.sender: {self.icx.get_balance(self.msg.sender)}", TAG)
-        Logger.warning(f"self.msg.value: {self.msg.value}", TAG)
-        # symbol = self.symbol()
-        cardList = self.showAllCard();
-        Logger.warning(f"showAllCard(): {cardList}", TAG)
-        # 지면 돈뺏고 이기면 내가 낸 돈에 두배 보상
-        if win == 1:
-            # self.icx.transfer(self.msg.sender, self.msg.value*2)
-            self.icx.send(self.msg.sender, 1000000000000000000)
-            Logger.warning("이김", TAG)
+        # 카드 정보 가져 옴
+        cardList = self.showAllCard()
+        cardCount = len(cardList)
+
+        # 자신이 소유한 카드 속성 중 제일 큰 값 가져오기
+        max = 0
+        # 카드 속성 정보 가져옴
+        for i in range(cardCount):
+            cards = eval(cardList[i])
+            # print("cards: ", cards)
+            # print("player: ", cards['player'])
+            property_sum = (cards['run']+cards['power']+cards['dribble']) / 3
+            # print("property_sum: ", property_sum)
+
+            if max <= (property_sum):
+                max = property_sum
+
+        # 이길 확률 조정
+        win_probability = 0
+
+        # 값(능력치)에 따라 이길 확률 조정!
+        if max >= 100 and max < 200:
+            win_probability += 30
+            print(f"100 ~ 200: {win_probability}")
+        elif max >= 200 and max < 300:
+            win_probability += 30 + (max / 10)
+            print(f"200 ~ 300: {win_probability}")
+        elif max >= 300 and max <= 400:
+            win_probability += 30 + (max / 10) + ((max/10)/5)
+            print(f"300 ~ 400: {win_probability}")
         else:
-            Logger.warning("짐", TAG)
-            # self.icx.transfer(self.msg.sender, self.msg.value)
+            raise IconScoreException("max 값 오류 입니다.")
+
+        # 게임 시작
+        if win_probability >= game_property:
+            # 이김
+            self.icx.transfer(self.msg.sender, self.msg.value * 2)
+            self._game_result[hash_time] = 1
+            Logger.warning(f"win {self._game_result[hash_time]}", TAG)
+        else:
+            self._game_result[hash_time] = 0
+            Logger.warning(f"lose {self._game_result[hash_time]}", TAG)
 
 
-        Logger.warning(f"self.address: {self.icx.get_balance(self.address)}", TAG)
-        Logger.warning(f"self.msg.sender: {self.icx.get_balance(self.msg.sender)}", TAG)
-        Logger.warning(f"self.msg.value: {self.msg.value}", TAG)
+    @external(readonly=True)
+    def getGameResult(self, _time:str)->int:
+        # 넘어온 시간 데이터를 해쉬화 - 키
+        hash_time = sha3_256(str(_time).encode())
+        Logger.warning(f"결과: {self._game_result[hash_time]}", TAG)
+        return self._game_result[hash_time]
+
+
+        # dicts = eval(cardList)
+        # print("dics", dicts)
+        #
+        # for k in dicts:
+        #     print("v", dicts[k])
+        #
+        # for i in range(cardCount):
+        #     Logger.warning(f"card: {cardList[i]}");
+        #
+        # for i in range(cardCount):
+        #     Logger.warning(f"card: {type(cardList[i])}");
+        #
+        # Logger.warning(f"len(cardList): {len(cardList)}");
+        # Logger.warning(f"cardList: {cardList}", TAG)
+
         # avg = cardList / len(cardList)
 
-    # 게임 실헹 시
     @payable
     def fallback(self):
         pass
-        # amount = self.msg.value
-        #
-        # # Bets must be under 10 ICX
-        # if amount <= 0 or amount >= 10 * 10 ** 18:
-        #     Logger.debug(f'Betting amount {amount} out of range.', TAG)
-        #     revert(f'Betting amount {amount} out of range.')
-        #
-        #
-        # Logger.warning(self.icx.get_balance(self.msg.sender), TAG)
-        # Logger.warning(self.icx.get_balance(self.address), TAG)
-        #
-        # # self.icx.transfer(self.msg.sender, amount)
-        #
-        # Logger.warning(self.icx.get_balance(self.msg.sender), TAG)
-        # Logger.warning(self.icx.get_balance(self.address), TAG)
-        # Logger.warning(TAG)
+
 
     # ******************* Customer Function *******************
     # 나중에 함수명 바꾸기 - ####
@@ -326,6 +367,7 @@ class IStarIRC3(IconScoreBase):
 
     @external
     def test(self, _tokenId:int)->str:
+        return self._token[_tokenId]
         # json_property = {}
         # # random 값을 가져오는데 0-100 사이의 값을 받아온
         # json_property['player'] = "test"
@@ -355,7 +397,7 @@ class IStarIRC3(IconScoreBase):
         #     json_property['dribble'] += 300
 
 
-        return self._token[_tokenId]
+
 
 
 
