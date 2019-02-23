@@ -29,6 +29,7 @@ let current = '';
 // 로딩바 바로 사라지게하기 위해
 $('#loading').hide();  
 
+
 // 소유자의 카드 보여줌
 myCard();
 
@@ -142,6 +143,8 @@ function eventHandler(event) {
 
 // SCORE 랑 통신하여 소유자의 카드갯수를 반환
 async function myCard() {
+
+    console.log("exe myCard()");
     var call = new CallBuilder()
         .from(address)
         .to(score_to)
@@ -152,21 +155,6 @@ async function myCard() {
     console.log("showAllCard: "+myCards);
 
     images(myCards)
-
-    // var call = new CallBuilder()
-    //     .from(address)
-    //     .to('cx37d5799e548048ba19566e3d018e77a9392b1cc2')
-    //     .method('showAllCard')
-    //     .params({ 
-    //         "_owner":address
-    //     })
-    //     .build()
-
-    // let balanceOf = await iconService.call(call).execute(); 
-    // console.log("balanceOf: "+balanceOf);
-
-
-    // images(balanceOf)
 }
 
 // 자신이 소유한 카드들을 보여주는 함수
@@ -195,19 +183,16 @@ function images(cards) {
         } else {
             grade = 'N';
         }
-
-        ㄴ
-
-        $('.front').append('<img src="../../img/player/Curry_N.png">');
-        $('.back').append('<img src="../../img/player/Curry_N_back.png">');
+        // $('.front').append('<img src="../../img/player/Curry_N.png">');
+        // $('.back').append('<img src="../../img/player/Curry_N_back.png">');
 
         $('.wrap').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png">');
 
-        $('.front').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png">');
-        $('.back').append('<img src="../../img/player/'+card_property.player+'_'+grade+'_back.png">');
+        // $('.front').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png">');
+        // $('.back').append('<img src="../../img/player/'+card_property.player+'_'+grade+'_back.png">');
 
-        console.log(card_property.run);
-        console.log(card_property.power);
+        // console.log(card_property.run);
+        // console.log(card_property.power);
 
     }
     // console.log("card_property="+card_property);
