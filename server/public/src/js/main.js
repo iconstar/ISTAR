@@ -26,8 +26,39 @@ window.addEventListener("ICONEX_RELAY_RESPONSE", eventHandler, false);
 
 let current = '';
 
+
+var html = "";
+// html = '<div class="container">'; 
+// html += '<div class="container-fluid">'; 
+// html += '<div class="row col-xs-12">'; 
+
+html += '<div class="card card-personal col-xs-3" style="margin-top:40px; height:350px; margin-left:90px;">';
+html += '<div class="card-body">';
+
+html += '<div class="flip-container" style="margin-bottom:30px; height:100px;">'; 
+html += '<div class="flipper">';
+html += '<div id="front" class="front"> </div>';  
+html += '<div id="back" class="back">'; 
+html += '<span class="tableNo" style="margin-left: 45px; margin-top:100px; color: #0b0b0b;"> </span>';
+// html += '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" style="margin-bottom:100px">sell card </button>';
+
+html += '</div>';
+html += '</div>';
+html += '</div>';
+html += '</div>';
+html += '</div>';
+
+html += '</div>';
+// html += '</div>';
+// html += '</div>';
+// html += '</div>';
+// html += '</div>';
+
+
+
 // 로딩바 바로 사라지게하기 위해
 $('#loading').hide();  
+
 
 // 소유자의 카드 보여줌
 myCard();
@@ -85,6 +116,34 @@ document.getElementById('gameStart').addEventListener('click', async () => {
     $('#loading').show();
 });
 
+// 이벤트 핸들러 - ICONex
+function eventHandler(event) {
+    var type = event.detail.type;
+    var payload = event.detail.payload;
+
+    switch (type) {
+        case "RESPONSE_JSON-RPC":
+            console.log("RESPONSE_JSON-RPC: "+JSON.stringify(payload));
+            
+            sleep(10000);
+            gemeResult();
+            $('#loading').hide();
+
+            break;
+        case "CANCEL_JSON-RPC":
+            console.log("CANCEL_JSON-RPC");
+            break;
+        case "RESPONSE_SIGNING":
+            console.log("RESPONSE_SIGNING6");
+            break;
+        case "CANCEL_SIGNING":
+            console.log("CANCEL_SIGNING");
+            break;
+        default:
+    }
+}
+
+
 // 게임한 결과를 가져옴
 async function gemeResult() {
     current = String(current)
@@ -113,35 +172,10 @@ async function gemeResult() {
     }
 }
 
-// 이벤트 핸들러 - ICONex
-function eventHandler(event) {
-    var type = event.detail.type;
-    var payload = event.detail.payload;
-
-    switch (type) {
-        case "RESPONSE_JSON-RPC":
-            console.log("RESPONSE_JSON-RPC: "+JSON.stringify(payload));
-            
-            sleep(10000);
-            gemeResult();
-            $('#loading').hide();
-
-            break;
-        case "CANCEL_JSON-RPC":
-            console.log("CANCEL_JSON-RPC");
-            break;
-        case "RESPONSE_SIGNING":
-            console.log("RESPONSE_SIGNING6");
-            break;
-        case "CANCEL_SIGNING":
-            console.log("CANCEL_SIGNING");
-            break;
-        default:
-    }
-}
-
 // SCORE 랑 통신하여 소유자의 카드갯수를 반환
 async function myCard() {
+
+    // console.log("exe myCard()");
     var call = new CallBuilder()
         .from(address)
         .to(score_to)
@@ -152,32 +186,21 @@ async function myCard() {
     console.log("showAllCard: "+myCards);
 
     images(myCards)
-
-    // var call = new CallBuilder()
-    //     .from(address)
-    //     .to('cx37d5799e548048ba19566e3d018e77a9392b1cc2')
-    //     .method('showAllCard')
-    //     .params({ 
-    //         "_owner":address
-    //     })
-    //     .build()
-
-    // let balanceOf = await iconService.call(call).execute(); 
-    // console.log("balanceOf: "+balanceOf);
-
-
-    // images(balanceOf)
 }
 
 // 자신이 소유한 카드들을 보여주는 함수
-function images(cards) {
+async function images(cards) {
     // Bryant_N / Cury_N / Griffin_N / Harden_N / Hayward_N / Irving_N / Jordan_N / Lebron_N
-
     // player = ['Bryant', 'Cury', 'Griffin', 'Harden', 'Hayward', 'Irving', 'Jordan', 'Lebron' ]
 
     var cardCount = cards.length;
     var card_property;
     var grade;
+
+    // for(var i=0; i<cardCount; i++) {
+    //     $('#basic').html(html);
+    // }
+
     for(var i=0; i<cardCount; i++) {
         var card = cards[i];
         // console.log(card.replace(/\'/gi, "\""));
@@ -187,6 +210,9 @@ function images(cards) {
         card_property = JSON.parse(card_str);
         // console.log(typeof(card_property));
         // console.log(card_property.player);
+        // console.log(card_property.dribble);
+        // console.log(card_property.power);
+        // console.log(card_property.run);
 
         if(card_property.run >= 300) {
             grade = 'S';
@@ -195,21 +221,42 @@ function images(cards) {
         } else {
             grade = 'N';
         }
+        
 
-        ㄴ
+        var html = "";
 
-        $('.front').append('<img src="../../img/player/Curry_N.png">');
-        $('.back').append('<img src="../../img/player/Curry_N_back.png">');
+        html += '<div class="card card-personal col-xs-3" style="margin-top:40px; height:350px; margin-left:90px;">';
+        html += '<div class="card-body">';
 
-        $('.wrap').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png">');
+        html += '<div class="flip-container" style="margin-bottom:30px; height:100px;">'; 
+        html += '<div class="flipper">';
+        html += '<div id="front" class="front"> '
+            html += '<img src="../../img/player/'+card_property.player+'_'+grade+'.png" style="weight:400px; height:280px;">'
+            html += '</div>';  
+        html += '<div id="back" class="back">'; 
+        html += '<span class="tableNo" style="margin-left: 45px; margin-top:100px; color: #0b0b0b;">';
+        html += '<h6>run : '+card_property.run+'<br>'+'dribble : '+card_property.dribble+'<br>'+'power : '+card_property.power+'</h6>  </span>'
+        html += '<img src="../../img/player/'+card_property.player+'_'+grade+'_back.png" style="weight:400px; height:280px;">'
+        html += '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" style="margin-bottom:100px">sell card </button>';
 
-        $('.front').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png">');
-        $('.back').append('<img src="../../img/player/'+card_property.player+'_'+grade+'_back.png">');
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
 
-        console.log(card_property.run);
-        console.log(card_property.power);
+        html += '</div>';
 
+        // $('#basic').html(html);
+        $('#basic').append(html);
+
+        // $('.front').append('<img src="../../img/player/Cury_N.png" style="weight:400px; height:280px;">');
+        // $('.back').append('<img src="../../img/player/Cury_N_back.png" style="weight:400px; height:280px;">');
+        // $('.front').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png" style="weight:400px; height:280px;">');
+        // $('.back').append('<img src="../../img/player/'+card_property.player+'_'+grade+'_back.png" style="weight:400px; height:280px;">');
+        
     }
+    
     // console.log("card_property="+card_property);
 }
 
@@ -221,9 +268,41 @@ function getParameterByAddress(address) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+// 아이콘 블록체인에 맞게 설정
 function sleep (delay) {
     var start = new Date().getTime();
     while (new Date().getTime() < start + delay);
  }
  
  
+
+//  // create container
+        // var div = document.createElement('div');
+        // div.id = "flip-container";
+        // div.innerHTML = document.getElementById('container my-auto').innerHTML;
+        // document.getElementById('container').appendChild(div);
+
+        // create container-fluid
+        // var div = document.createElement('div');
+        // div.innerHTML = document.getElementById('container').innerHTML;
+        // document.getElementById('container-fluid').appendChild(div);
+
+        // // create col-xs-12
+        // var div = document.createElement('div');
+        // div.innerHTML = document.getElementById('ontainer-fluid').innerHTML;
+        // document.getElementById('row col-xs-12').appendChild(div);
+
+        // // create card card-personal col-xs-3
+        // var div = document.createElement('div');
+        // div.innerHTML = document.getElementById('row col-xs-12').innerHTML;
+        // document.getElementById('card card-personal col-xs-3').append('style="margin-top:40px; height:350px; margin-left:90px;"').appendChild(div);
+
+        // // create card-body
+        // var div = document.createElement('div');
+        // div.innerHTML = document.getElementById('card card-personal col-xs-3').innerHTML;
+        // document.getElementById('card-body').append('style="margin-top:40px; height:350px; margin-left:90px;"').appendChild(div);
+
+        // // create flip-container
+        // var div = document.createElement('div');
+        // div.innerHTML = document.getElementById('card-body').innerHTML;
+        // document.getElementById('flip-container').append('style="margin-bottom:30px; height:100px;"').appendChild(div);

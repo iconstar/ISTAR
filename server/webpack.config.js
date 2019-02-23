@@ -5,7 +5,8 @@ module.exports = {
 	entry: ['babel-polyfill', './public/src/js/main.js'],	// modify path
 	output: {
 		filename: 'bundleMain.js',	// modify path
-		path: "/Users/SG/istar/server/public/src/js/bundle"// modify path
+		// path: "/Users/SG/istar/server/public/src/js/bundle"// modify path
+		path: "/Users/SG/icon_project/icon_nft_game/server/public/src/js/bundle"
 	},
 	module: {
 		rules: [
