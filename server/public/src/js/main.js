@@ -1,7 +1,11 @@
 // 아이콘 2초 ㅋㅋㅋㅋ 10초걸리는데??ㅋㅋㅋㅋ  (로컬이라서 그런가?)
 
 import IconService, { IconAmount, IconConverter, HttpProvider, IconWallet, IconBuilder, SignedTransaction } from 'icon-sdk-js';
+// import cheerio from 'cheerio';
+const cheerio = require('cheerio');
 
+
+// console.log("cheerio: "+cheerio);
 // httpProvider = new HttpProvider();
 const httpProvider = new HttpProvider('http://127.0.0.1:9000/api/v3');
 const iconService = new IconService(httpProvider);
@@ -25,36 +29,7 @@ var address = getParameterByAddress('address');
 window.addEventListener("ICONEX_RELAY_RESPONSE", eventHandler, false);
 
 let current = '';
-
-
-var html = "";
-// html = '<div class="container">'; 
-// html += '<div class="container-fluid">'; 
-// html += '<div class="row col-xs-12">'; 
-
-html += '<div class="card card-personal col-xs-3" style="margin-top:40px; height:350px; margin-left:90px;">';
-html += '<div class="card-body">';
-
-html += '<div class="flip-container" style="margin-bottom:30px; height:100px;">'; 
-html += '<div class="flipper">';
-html += '<div id="front" class="front"> </div>';  
-html += '<div id="back" class="back">'; 
-html += '<span class="tableNo" style="margin-left: 45px; margin-top:100px; color: #0b0b0b;"> </span>';
-// html += '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" style="margin-bottom:100px">sell card </button>';
-
-html += '</div>';
-html += '</div>';
-html += '</div>';
-html += '</div>';
-html += '</div>';
-
-html += '</div>';
-// html += '</div>';
-// html += '</div>';
-// html += '</div>';
-// html += '</div>';
-
-
+var full_html = "";
 
 // 로딩바 바로 사라지게하기 위해
 $('#loading').hide();  
@@ -115,6 +90,21 @@ document.getElementById('gameStart').addEventListener('click', async () => {
 
     $('#loading').show();
 });
+
+document.getElementById('sellCard').addEventListener('click', async () => {
+    $('#modal').hide();
+
+    var player_id = document.getElementById('player_id').value;
+    var player_price = document.getElementById('player_price').value;
+
+    // console.log("player_id: "+ player_id);
+    // console.log("player_price: "+ player_price);
+
+    playerSell(player_id)
+
+
+});
+
 
 // 이벤트 핸들러 - ICONex
 function eventHandler(event) {
@@ -203,10 +193,8 @@ async function images(cards) {
 
     for(var i=0; i<cardCount; i++) {
         var card = cards[i];
-        // console.log(card.replace(/\'/gi, "\""));
         var card_str = card.replace(/\'/gi, "\"");
 
-        // console.log(typeof(card_str));
         card_property = JSON.parse(card_str);
         // console.log(typeof(card_property));
         // console.log(card_property.player);
@@ -233,12 +221,12 @@ async function images(cards) {
         html += '<div id="front" class="front"> '
             html += '<img src="../../img/player/'+card_property.player+'_'+grade+'.png" style="weight:400px; height:280px;">'
             html += '</div>';  
-        html += '<div id="back" class="back">'; 
-        html += '<span class="tableNo" style="margin-left: 45px; margin-top:100px; color: #0b0b0b;">';
-        html += '<h6>run : '+card_property.run+'<br>'+'dribble : '+card_property.dribble+'<br>'+'power : '+card_property.power+'</h6>  </span>'
+        html += '<div id="back'+i+'" class="back">'; 
+        html += '<span id="cardinfo" class="tableNo" style="margin-left: 45px; margin-top:100px; color: #0b0b0b;">';
+        html += '<h6> run:'+card_property.run+' <br>'+'dribble:'+card_property.dribble+' <br>'+'power:'+card_property.power+' <br><br><br>'+card_property.player+'</h6></span>'
         html += '<img src="../../img/player/'+card_property.player+'_'+grade+'_back.png" style="weight:400px; height:280px;">'
-        html += '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" style="margin-bottom:100px">sell card </button>';
-
+        html += '<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sellModal" style="margin-bottom:100px">sell card </button>';
+                // <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sellModal" style="margin-bottom:150px">Let's GAME  </button>
         html += '</div>';
         html += '</div>';
         html += '</div>';
@@ -246,17 +234,13 @@ async function images(cards) {
         html += '</div>';
 
         html += '</div>';
-
-        // $('#basic').html(html);
+        
         $('#basic').append(html);
 
-        // $('.front').append('<img src="../../img/player/Cury_N.png" style="weight:400px; height:280px;">');
-        // $('.back').append('<img src="../../img/player/Cury_N_back.png" style="weight:400px; height:280px;">');
-        // $('.front').append('<img src="../../img/player/'+card_property.player+'_'+grade+'.png" style="weight:400px; height:280px;">');
-        // $('.back').append('<img src="../../img/player/'+card_property.player+'_'+grade+'_back.png" style="weight:400px; height:280px;">');
+        full_html += html;
+
         
     }
-    
     // console.log("card_property="+card_property);
 }
 
@@ -275,6 +259,52 @@ function sleep (delay) {
  }
  
  
+// 
+function playerSell(player_id) {
+    //  컴퓨터는 0부터  
+    player_id -= 1;
+    
+    var playerInfo = "";
+    
+    var $ = cheerio.load(full_html);
+    
+    var class_a = $('h6', 'span', $('#back'+player_id));
+        
+    class_a.each(function () {
+        playerInfo = $(this).text();
+        // console.log("선수들 정보: "+$(this).text());
+    });
+
+    // console.log("playerInfo: "+playerInfo);
+    var splitInfo = playerInfo.split(" ");
+
+    // console.log("splitInfo: "+splitInfo);
+    // console.log("splitInfo: "+typeof(splitInfo));
+
+    // for(var i=0; i<splitInfo.length; i++) {
+    //     console.log(" "+splitInfo[i]);
+    // }
+
+    // console.log(splitInfo[1].split(":"));
+    // console.log(splitInfo[2].split(":"));
+    // console.log(splitInfo[3].split(":"));
+    // console.log(splitInfo[4].split(":"));
+
+
+    var run = splitInfo[1].split(":")[1];
+    var dribble = splitInfo[2].split(":")[1];
+    var power = splitInfo[3].split(":")[1];
+    var name = splitInfo[4];
+
+    console.log("run: "+run);
+    console.log("dribble: "+dribble);
+    console.log("power: "+power);
+    console.log("name: "+name);
+   
+    // var player_name = playerInfo
+
+}
+
 
 //  // create container
         // var div = document.createElement('div');
@@ -306,3 +336,65 @@ function sleep (delay) {
         // var div = document.createElement('div');
         // div.innerHTML = document.getElementById('card-body').innerHTML;
         // document.getElementById('flip-container').append('style="margin-bottom:30px; height:100px;"').appendChild(div);
+
+
+// sell card()
+    // var info = "#back"+player_id;
+    // 선수들의 정보 가져옴
+    // var $ = cheerio.load(full_html);
+    // var class_a = $('h6', 'span', $("#back"+player_id));
+
+    // // consol
+    // class_a.each(function () {
+    //     console.log($(this).text());
+    // });
+
+    // console.log("full_html: "+full_html);
+    // test(full_html);
+    // var date = new Date();
+    // // currentTime = date.getTime();
+    // current = String(date.getTime());
+    
+    // // console.log("date.getTime(): "+date.getTime());
+    // console.log("gameStart()1, current: "+current)
+    // console.log("gameStart()1, current: "+typeof(current))
+
+    // // await this.readFile();
+    // var price = parseInt(document.getElementById('price_number').value);
+
+    // // var price = Number(price_value);
+    // // console.log("price: "+price);
+    // console.log("price: "+typeof(price));
+    
+    // var callTransactionBuilder = new IconBuilder.CallTransactionBuilder;
+    // var callTransactionData = callTransactionBuilder
+    //     .from(address)
+    //     .to(score_to)
+    //     .nid(IconConverter.toBigNumber(3))
+    //     .value(IconAmount.of(Number(price), IconAmount.Unit.ICX).toLoop())
+    //     .timestamp((new Date()).getTime() * 1000)
+    //     .stepLimit(IconConverter.toBigNumber(10000000))
+    //     .version(IconConverter.toBigNumber(3))
+    //     .method('startGame')
+    //     .params({  
+    //         "_time": current
+    //     })
+    //     .build();
+
+    // var score_sdk = JSON.stringify( {
+    //     "jsonrpc":"2.0",
+    //     "method":"icx_sendTransaction",
+    //     "params":IconConverter.toRawTransaction(callTransactionData),
+    //     "id":50889
+    // })
+
+    // var parsed = JSON.parse(score_sdk)
+    // console.log("parsed: "+parsed);
+    // window.dispatchEvent(new CustomEvent('ICONEX_RELAY_REQUEST', {
+    //     detail: {
+    //         type: 'REQUEST_JSON-RPC',
+    //         payload: parsed,
+    //     }
+    // })); 
+
+    // $('#loading').show();
