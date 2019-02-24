@@ -653,7 +653,9 @@
  .portfolio-box-caption-content
  .project-category {
      font-size: 14px;
-     font-weight: 600;
+     font-weight: 600;display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
      text-transform: uppercase
  }
  

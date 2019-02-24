@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -62,20 +60,21 @@
 
 <!-- 네비게이션 컴포넌트 -->
 <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-    <div class="container">
-        <img class="img-fluid" src="img/basketicon.png" alt="" width="60px" height="60px">
-        <a class="navbar-brand js-scroll-trigger" href="./index.html">I-STAR</a>
-        <button class="navbar-toggler navbar-toggler-right" type="button"
-                data-toggle="collapse"
-                data-target="#navbarResponsive"
-                aria-controls="navbarResponsive"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <div class="container" style="position:fixed; margin-top:100px; margin-left:74px;">
+        <img class="img-fluid" src="img/basketicon.png" alt="" width="60px" height="60px" style="margin-bottom:140px;">
+        <a class="navbar-brand js-scroll-trigger" href="./index.html" style="margin-bottom:140px;">I-STAR</a>
+        <!-- 마지막 체크해서 삭제여부 확인하기 -->
+        <!--<button class="navbar-toggler navbar-toggler-right" type="button"-->
+                <!--data-toggle="collapse"-->
+                <!--data-target="#navbarResponsive"-->
+                <!--aria-controls="navbarResponsive"-->
+                <!--aria-expanded="false"-->
+                <!--aria-label="Toggle navigation">-->
+            <!--<span class="navbar-toggler-icon"></span>-->
+        <!--</button>-->
 
         <!-- 카드구매, 게임버튼  -->
-        <div class="collapse navbar-collapse" id="navbarResponsive">
+        <div class="collapse navbar-collapse" id="navbarResponsive" style="margin-left:100px;">
             <ul class="navbar-nav ml-auto">
                 <!--카드 구매 card.html-->
                 <li class="nav-item">
@@ -86,6 +85,7 @@
                     </a>
                 </li>
                 <!--카드 구매 card.html - 끝!-->
+
                 <!--카드 거래 market.html-->
                 <li class="nav-item">
                     <a class="nav-link js-scroll-trigger" onclick="goMarket()">
@@ -95,8 +95,9 @@
                     </a>
                 </li>
                 <!--카드 구매 market.html - 끝!-->
+
                 <!-- 게임 버튼 - 게임시작 -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLong" style="margin-bottom:150px">Let's GAME  </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#gameModal" style="margin-bottom:150px">Let's GAME  </button>
                 <!-- 게임 버튼 - 끝 -->
             </ul>
         </div>
@@ -105,12 +106,12 @@
     </div>
 </nav>
 
-<!-- 모달 부분 -->
-<div class="modal fade" id="exampleModalLong" tabindex="-1"role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" id="modal">
+<!-- LET'S GAME modal 부분 -->
+<div id="gameModal" class="modal fade" tabindex="-1"role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" id="modal">
     <div class="modal-dialog" role="document">
-        <div class="modal-content modal-sm">
+        <div class="modal-content modal">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Info Card</h5>
+                <h5 class="modal-title" id="gameModal_title">Info Card</h5>
                 <button type="button" class="close" data-dismiss="modal"aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -119,7 +120,37 @@
             <div class="modal-body" style="padding:40px 50px;">
                 <form role="form">
                     <div class="form-group">
-                        <label for="price">PRICE(ICX)</label>
+                        <label>PRICE</label>
+                        <!-- 입력 id 바꿨어요 - 윤영-->
+                        <input type="number" class="form-control" id="betting_price" placeholder="ENTER THE PRICE(ICX)">
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close </button>
+                <button id="gameStart" type="button" class="btn btn-primary" > GameStart </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- LET'S GAME modal 부분 - 끝 -->
+
+<!-- 모달 부분 - sellCard-->
+<div id="sellModal" class="modal fade" tabindex="-1"role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" id="modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content modal">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">SELL CARD</h5>
+                <button type="button" class="close" data-dismiss="modal"aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" style="padding:40px 50px;">
+                <form role="form">
+                    <div class="form-group">
+                        <label>PRICE(ICX)</label>
                         <input type="number" class="form-control" id="price_number" placeholder="Enter price">
                     </div>
                 </form>
@@ -127,13 +158,13 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close </button>
-            
-                <button id="gameStart" type="button" class="btn btn-primary" > GameStart </button>
+                <button id="sellCard" type="button" class="btn btn-primary" > Sell </button>
             </div>
         </div>
     </div>
 </div>
-<!-- 모달 부분 - 끝 -->
+    <!-- 모달 부분 - 끝 -->
+
 
 <!-- 위치가 여기있어야 실행됨!! - bundleMain.js -->
 <!-- 내 카드 가져오기 - 승규 -->
@@ -146,11 +177,12 @@
     </div>
 </header> -->
 
+<!-- 내 카드들 불러오기 -->
 <header class="masthead text-center text-white d-flex">
     <div class="container my-auto" style="background-color: #bdbdbd; overflow:scroll; height:500px;">
         <div class="container">
             <div class="container-fluid">
-                    <div id="basic" class="row col-xs-12">
+                <div id="basic" class="row col-xs-12">
                         <script type="text/javascript" src="./src/js/bundle/bundleMain.js"></script>
         <!-- </div> -->
 
@@ -180,7 +212,7 @@
 
 
 
-<!-- 메인화면 밖, Contack 부분 -->
+<!-- 메인화면 밖, Contact 부분 -->
 <section id="contact">
     <div class="container">
         <div class="row">
