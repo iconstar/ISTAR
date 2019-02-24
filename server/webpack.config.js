@@ -1,4 +1,5 @@
 var path = require('path');
+var cheerio = require('cheerio');
 
 module.exports = {
 	devtool: "cheap-eval-source-map",
