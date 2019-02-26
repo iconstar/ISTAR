@@ -128,13 +128,6 @@ function eventHandler(event) {
 }
 
 
-async function approve() {
-
-}
-
-
-
-
 // SCORE 랑 통신하여 소유자의 카드갯수를 반환
 async function myCard() {
     // console.log("exe myCard()");
@@ -230,7 +223,6 @@ async function images(cards) {
         html += '</div>';
         html += '</div>';
         html += '</div>';
-
         html += '</div>';
         
         $('#basic').append(html);
@@ -239,7 +231,6 @@ async function images(cards) {
     }
 }
 
-
 // get방식으로 넘어온 address 를 리턴함
 function getParameterByAddress(address) {
     var address = address.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -247,5 +238,3 @@ function getParameterByAddress(address) {
         results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
-
- 
