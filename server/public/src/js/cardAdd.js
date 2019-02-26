@@ -26,8 +26,7 @@ window.addEventListener("ICONEX_RELAY_RESPONSE", eventHandler, false);
 
 // 커스텀 변수
 var address = getParameterByAddress('address');
-var score_to = 'cxdacd3169934b4da8ab0141c5f6c2b74ce320fd67';
-var addr_to = "hxc22ae778606f626c03815a5adc41da4a1dad6b4f";
+var score_to = 'cx6b8f1ba9aecf43bf3df46bf81e20a4fa048ee975';
 var grade = 0;
 
 
