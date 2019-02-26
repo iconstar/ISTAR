@@ -3,14 +3,14 @@ var cheerio = require('cheerio');
 
 module.exports = {
 	devtool: "cheap-eval-source-map",
-	entry: ['babel-polyfill', './public/src/js/cardAdd.js'],	// modify path
+	// entry: ['babel-polyfill', './public/src/js/cardAdd.js'],	// modify path
 	// entry: ['babel-polyfill', './public/src/js/main.js'],	// modify path
-	// entry: ['babel-polyfill', './public/src/js/market.js'],	// modify path
+	entry: ['babel-polyfill', './public/src/js/market.js'],	// modify path
 	
 	output: {
-		filename: 'bundleCardAdd.js',	// modify path
+		// filename: 'bundleCardAdd.js',	// modify path
 		// filename: 'bundleMain.js',	// modify path
-		// filename: 'bundleMarket.js',	// modify path
+		filename: 'bundleMarket.js',	// modify path
 
 		// path: "/Users/SG/istar/server/public/src/js/bundle"// modify path
 		// path: "/Users/SG/icon_project/icon_nft_game/server/public/src/js/bundle"
