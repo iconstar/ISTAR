@@ -1,3 +1,10 @@
+"""
+Programmer    : 김승규, 정해민 - pair programming
+description   : IRC3 - NFT IMPLEMENTATION
+Update Date   : 2019.02.27
+Update        : IRC3 (name, symbol, balanceOf, ownerOf, getApproved, approve, transfer, transferFrom)
+"""
+
 from iconservice import *
 
 TAG = 'IRC3'

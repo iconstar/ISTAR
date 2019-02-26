@@ -1,8 +1,8 @@
 """
 Programmer    : 김승규, 정해민 - pair programming
 description   : ISTAR SCORE of ICON
-Update Date   : 2019.02.25
-Update        : ADD TEST_FUNCTION, TEST_FUNCTION(balanceOf, getApproved, approve, transfer, )
+Update Date   : 2019.02.27
+Update        : ISTAR TEST CODE
 """
 
 import os
@@ -28,8 +28,6 @@ DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 class TestIStarIRC3(IconIntegrateTestBase):
     TEST_HTTP_ENDPOINT_URI_V3 = "http://127.0.0.1:9000/api/v3"
     SCORE_PROJECT= os.path.abspath(os.path.join(DIR_PATH, '..'))
-
-    # ******************* INIT Test *******************
 
     def setUp(self):
         super().setUp()
@@ -71,7 +69,7 @@ class TestIStarIRC3(IconIntegrateTestBase):
 
         self.assertEqual(self._score_address, tx_result['scoreAddress'])
 
-    # ******************* IRC3 Test *******************
+    # ******************* ISTAR Test *******************
     def test_getTotalToken(self):
         call = CallBuilder() \
             .from_(self._test1.get_address()) \
@@ -143,42 +141,3 @@ class TestIStarIRC3(IconIntegrateTestBase):
         # print("signed_transaction: ", signed_transaction)
         response = self.process_transaction(signed_transaction, self.icon_service)
         print("response: ", response)
-
-        # call = CallBuilder() \
-        #     .from_(self._test1.get_address()) \
-        #     .to(self._score_address) \
-        #     .method("getTotalToken") \
-        #     .build()
-        #
-        # response = self.process_call(call, self.icon_service)
-        # print("getTotalToken : ", response)
-
-
-        # ##### getMyCard
-        # call = CallBuilder() \
-        #     .from_(self._test1.get_address()) \
-        #     .to(self._score_address) \
-        #     .method("getMyCard") \
-        #     .build()
-        #
-        # response = self.process_call(call, self.icon_service)
-        # print("getMyCard : ", response)
-
-
-        #
-        # params = {
-        #     "_playerId": 4,
-        #     "_price":1
-        # }
-        #
-
-        #
-        #
-        # call = CallBuilder() \
-        #     .from_(self._test1.get_address()) \
-        #     .to(self._score_address) \
-        #     .method("getTotalToken") \
-        #     .build()
-        #
-        # response = self.process_call(call, self.icon_service)
-        # print("getTotalToken : ", response)

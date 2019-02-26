@@ -1,3 +1,10 @@
+"""
+Programmer    : 김승규, 정해민 - pair programming
+description   : ISTAR SCORE of ICON
+Update Date   : 2019.02.27
+Update        : ISTAR (createCard, startGame, auctionSell, auctionBuy)
+"""
+
 # IRC3 = cx557e488ea593c9c71afad8d04a1fec38b3a44d5c
 # ISTAR = cx6b8f1ba9aecf43bf3df46bf81e20a4fa048ee975
 
@@ -387,7 +394,6 @@ class ISTAR(IconScoreBase):
         Logger.warning("_buyApprove: 2")
         self.icx.transfer(tokenOwner, price)
 
-
     def _approve(self, _to: Address, _tokenId: int):
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
         # 호출한 사람이 토큰을 가지고 잇는지 확인
@@ -411,8 +417,6 @@ class ISTAR(IconScoreBase):
         # token의 소유자를 approve 실행
         irc3.setApproveAddress(_to, _tokenId)
 
-
-
     # 데이터 확인 코드
     @external
     def getName(self):
@@ -428,7 +432,6 @@ class ISTAR(IconScoreBase):
     def getTotalToken(self):
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
         return irc3.getTotalToken()
-
 
     # getToken 으로 바꾸기
     @external

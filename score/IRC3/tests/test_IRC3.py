@@ -1,3 +1,10 @@
+"""
+Programmer    : 김승규, 정해민 - pair programming
+description   : IRC3 - NFT TEST CODE
+Update Date   : 2019.02.27
+Update        : TEST BACKUP
+"""
+
 import os
 
 from iconsdk.builder.transaction_builder import DeployTransactionBuilder, CallTransactionBuilder
