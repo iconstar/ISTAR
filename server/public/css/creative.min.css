@@ -40,9 +40,7 @@
  .bg-market {
      padding-top: 3rem;
      padding-bottom: calc(3rem - 40px);
-     background-image: url(../img/header.jpg);
-     background-position: center center;
-     background-size: cover
+     margin-top: 30px;
  }
  
  .bg-primary {
@@ -722,6 +720,22 @@
  .btn-primary:active, .btn-primary:focus {
      -webkit-box-shadow: 0 0 0 .2rem rgba(31, 175, 201) !important;
      box-shadow: 0 0 0 .2rem rgba(31, 175, 201) !important
+ }
+
+ .win-title{
+        text-shadow: 2px 2px 6px black;
+        font-family: "Arial Black", sans-serif;
+        font-size: 36px;
+        font-weight: bold;
+        color: #1FC5C9;
+ }
+
+ .lose-title{
+        text-shadow: 2px 2px 6px black;
+        font-family: "Arial Black", sans-serif;
+        font-size: 36px;
+        font-weight: bold;
+        color: #808080;
  }
  
  /* 커스터마이징 */
