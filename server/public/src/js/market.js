@@ -10,7 +10,7 @@ const signedTransaction = IconService.SignedTransaction;
 const iconWallet = IconService.IconWallet;
 
 // 커스텀 변수
-var score_to = 'cx6b8f1ba9aecf43bf3df46bf81e20a4fa048ee975';
+var score_to = 'cxa6b3cb2b3a474412d7f0b870525213a8665c77ec';
 var address = getParameterByAddress('address');
 
 
@@ -28,6 +28,8 @@ var full_html = "";
 myCard();
 
 document.getElementById('buyCard').addEventListener('click', async () => {
+    $('#buyModal').hide();
+
     var player_id = document.getElementById('player_id').value;
 
     // 경매장에 있는 카드리스트를 가져옴
@@ -39,13 +41,26 @@ document.getElementById('buyCard').addEventListener('click', async () => {
 
     let myCards = await iconService.call(call).execute();
     
-    var selectCard = myCards[player_id-1];
+    console.log("myCards.length: "+myCards.length);
+    console.log("myCards: "+myCards);
+    console.log("myCards: "+typeof(myCards));
+    
+    // 빈 카드가 존재하기 때문에 빈카드 없앰!
+    var cardList = [];
+    for(var i=0; i<myCards.length; i++) {
+        if(!myCards[i]) {
+            continue;
+        } 
+        cardList.push(myCards[i]);
+    }
+    
+    var selectCard = cardList[player_id-1];
     console.log("selectCard: "+selectCard);
     
-    
-    
     var card_str = selectCard.replace(/\'/gi, "\"");
-
+    if(!card_str) {
+        alert("잘못된 입력!!");
+    }
     var card_property = JSON.parse(card_str);
     var price = String(card_property.price);
 
@@ -102,16 +117,10 @@ function eventHandler(event) {
         case "RESPONSE_JSON-RPC":
             console.log("RESPONSE_JSON-RPC: "+JSON.stringify(payload));
             
-
-            // 1. score가 buy 한테 approve
-            // approve();
             
-
-            // 2. score가 transferFrom
-            // transferFrom
-
-            // 3. 호출한 사람이 -> owenre 돈지불
-            // transfer
+            
+            
+            location.reload();
 
             break;
         case "CANCEL_JSON-RPC":
@@ -138,7 +147,9 @@ async function myCard() {
         .build()
 
     let myCards = await iconService.call(call).execute();
+    console.log("myCards: "+myCards);
     console.log("showAllCard: "+myCards);
+
 
      images(myCards)
 }
@@ -150,12 +161,10 @@ async function images(cards) {
 // {'address': <iconservice.base.address.Address object at 0x108fd9f28>, 
 // 'property': {'player': 'Griffin', 'run': 306, 'power': 355, 'dribble': 390}, 'price': 1}
 
-    console.log("exe images");
-
     var cardCount = cards.length;
     console.log("cardCount: "+cardCount);
-    var card_property;
-    console.log("card_property: "+card_property);
+    // var card_property;
+    // console.log("card_property: "+card_property);
     var grade;
     
     // for(var i=0; i<cardCount; i++) {
@@ -164,10 +173,16 @@ async function images(cards) {
 
     for(var i=0; i<cardCount; i++) {
         var card = cards[i];
+        console.log("card: "+card);
         var card_str = card.replace(/\'/gi, "\"");
 
         console.log("card_str:"+card_str);
         console.log("card_str:"+typeof(card_str));
+        
+        if( !card_str) {
+            console.log("데이터 없음!");
+            continue;
+        }
 
         var cardObject = JSON.parse(card_str);
 
@@ -227,7 +242,7 @@ async function images(cards) {
         
         $('#basic').append(html);
 
-        full_html += html; 
+        // full_html += html; 
     }
 }
 
