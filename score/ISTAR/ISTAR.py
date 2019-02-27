@@ -2,14 +2,14 @@
 Programmer    : 김승규, 정해민 - pair programming
 description   : ISTAR SCORE of ICON
 Update Date   : 2019.02.27
-Update        : ISTAR (createCard, startGame, auctionSell, auctionBuy)
+Update        : COMPLETE ISTAR 
 """
 
-# IRC3 = cx557e488ea593c9c71afad8d04a1fec38b3a44d5c
-# ISTAR = cx6b8f1ba9aecf43bf3df46bf81e20a4fa048ee975
+# IRC3 = cxc4176d1a82b7d32bd789c0abfc04175d5dd29950
+# ISTAR = cxa6b3cb2b3a474412d7f0b870525213a8665c77ec
 
-# tbears deploy -m update -o cx557e488ea593c9c71afad8d04a1fec38b3a44d5c ../IRC3
-# tbears deploy -m update -o cx6b8f1ba9aecf43bf3df46bf81e20a4fa048ee975 ../ISTAR
+# tbears deploy -m update -o cxc4176d1a82b7d32bd789c0abfc04175d5dd29950 ../IRC3
+# tbears deploy -m update -o cxa6b3cb2b3a474412d7f0b870525213a8665c77ec ../ISTAR
 
 from iconservice import *
 
@@ -86,10 +86,8 @@ class IRC3Interface(InterfaceScore):
     def getApproveAddress(self, _tokenId: int):
         pass
 
-
-
 class ISTAR(IconScoreBase):
-    IRC3Address = "cx557e488ea593c9c71afad8d04a1fec38b3a44d5c"
+    IRC3Address = "cxc4176d1a82b7d32bd789c0abfc04175d5dd29950"
 
     def __init__(self, db: IconScoreDatabase) -> None:
         super().__init__(db)
@@ -97,6 +95,7 @@ class ISTAR(IconScoreBase):
         self._game_result = DictDB("GAME_REUSLT", db, value_type=int)
         # 경매 db
         self._auction = DictDB("AUCTION", db, value_type=str)
+        # self._auction = ArrayDB("AUCTION", db, value_type=str)
         # 경매에 올라가 있는 카드 수
         self._total_auction = VarDB("TOTALAUCTION", db, value_type=int)
 
@@ -137,7 +136,7 @@ class ISTAR(IconScoreBase):
         json_property['dribble'] = int.from_bytes(sha3_256(
             self.msg.sender.to_bytes() + str(self.block.timestamp).encode() + "dribble".encode()), 'big') % 100
 
-        # 에러 처리
+        # 에러 처리 고민
         if _grade == 1:
             # normal grade
             json_property['run'] += 100
@@ -154,7 +153,7 @@ class ISTAR(IconScoreBase):
             json_property['dribble'] += 300
             # rare grade
         else:
-            raise IconScoreException("createCard: ", "뒤질래? 누가 해킹하래? 누가 데이터 변조하래 / 이거 블록체인이야!!")
+            raise IconScoreException("createCard: The corresponding value does not exist")
 
         ## 토큰에다 속성을 정의
         irc3.setToken(tokenId, str(json_property))
@@ -283,8 +282,8 @@ class ISTAR(IconScoreBase):
         totalAuction = self._total_auction.get()
         Logger.warning(f"auctionSell totalAuction: {totalAuction}", TAG)
         self._auction[totalAuction] = str(json_sell)
-        Logger.warning(f"auctionSell self._auction[totalAuction]: {self._auction[totalAuction]}", TAG)
         # self._auction.put(str(json_sell))
+        Logger.warning(f"auctionSell self._auction[totalAuction]: {self._auction[totalAuction]}", TAG)
 
         # 경매에 올라가져 있어 경매 카드 수 하나 증가
         totalAuction +=1
@@ -337,28 +336,48 @@ class ISTAR(IconScoreBase):
         # irc3.transferFrom(tokenOwner, self.msg.sender, tokenId)
         # Logger.warning("3", TAG)
 
-        # 경매장에 있는 정보 삭제
-        # self._auction.pop(_playerId-1)
-        Logger.warning(f"AC1 {self._auction[_playerId - 1]}")
-        del self._auction[_playerId-1]
-        Logger.warning(f"AC2 {self._auction[_playerId - 1]}")
-
-        Logger.warning("4", TAG)
-        # 1. approve???
-        # 2. tranferForm 전달하고
-        # 3. owner에게 돈을 전달
-
-        # 경매에 올라가져 있어 경매 카드 수 하나 증가
         totalAuction = self._total_auction.get()
+
+        Logger.warning(f"auctionBuy totalAuction: {totalAuction}", TAG)
+        # self._auction[_playerId-1]
+        Logger.warning(f"auctionBuy self._auction[_playerId-1]: {self._auction[_playerId-1]}", TAG)
+        Logger.warning(f"auctionBuy self._auction[totalAuction]: {self._auction[totalAuction-1]}", TAG)
+
+        ## 구매시 경매 카드 수 하나 감소
+        # 마지막 변수랑 swapping
+        temp = self._auction[_playerId-1] # 2->temp = 2
+        self._auction[_playerId-1] = self._auction[totalAuction-1] # 5 -> 2 = 5
+        self._auction[totalAuction-1] = temp  # 5 -> temp  = 2
+
+        Logger.warning(f"auctionBuy self._auction[_playerId-1]: {self._auction[_playerId - 1]}", TAG)
+        Logger.warning(f"auctionBuy self._auction[totalAuction]: {self._auction[totalAuction-1]}", TAG)
+
+        del self._auction[totalAuction-1]
+
         totalAuction -= 1
         self._total_auction.set(totalAuction)
-        Logger.warning(f"self._total_auction: {self._total_auction.get()}", TAG)
+        Logger.warning(f"auctionBuy self._total_auction: {self._total_auction.get()}", TAG)
 
-        Logger.warning(f"{self.address}", TAG)
+        # 데이터 삭제
+        # self._auction.pop()
 
+        Logger.warning(f"auctionBuy self._auction[_playerId-1]: {self._auction[_playerId - 1]}", TAG)
+        Logger.warning(f"auctionBuy self._auction[totalAuction]: {self._auction[totalAuction]}", TAG)
 
-        self.icx.transfer(tokenOwner, _price)
-        Logger.warning("5", TAG)
+        price = _price * (10 ** 18)
+        Logger.warning(f"auctionBuy price: {price}", TAG)
+        self.icx.transfer(tokenOwner, price)
+        # flag = self.icx.send(tokenOwner, _price*10*18)
+
+        # Logger.warning(f"auctionBuy flag: {flag}", TAG)
+        # Logger.warning("5", TAG)
+
+        # # 경매장에 있는 정보 삭제
+        # # self._auction.pop(_playerId-1)
+        # Logger.warning(f"AC1 {self._auction[_playerId - 1]}")
+        # Logger.warning(f"AC2 {self._auction[_playerId - 1]}")
+        #
+        # Logger.warning("4", TAG)
 
     # ---------------------------------------- 필요한 함수
 
@@ -388,11 +407,10 @@ class ISTAR(IconScoreBase):
         if self.address != self.getApproved(tokenId):
             raise IconScoreException("Approve4 가 일치하지 않습니다.!!")
 
-        Logger.warning("_buyApprove: ㅠㅠ")
-
         irc3.transferFrom(tokenOwner, self.msg.sender, tokenId)
-        Logger.warning("_buyApprove: 2")
+
         self.icx.transfer(tokenOwner, price)
+
 
     def _approve(self, _to: Address, _tokenId: int):
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
@@ -417,23 +435,11 @@ class ISTAR(IconScoreBase):
         # token의 소유자를 approve 실행
         irc3.setApproveAddress(_to, _tokenId)
 
-    # 데이터 확인 코드
-    @external
-    def getName(self):
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        return irc3.name()
-
-    @external
-    def getSymbol(self):
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        return irc3.symbol()
-
     @external
     def getTotalToken(self):
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
         return irc3.getTotalToken()
 
-    # getToken 으로 바꾸기
     @external
     def getToken(self, _tokenId:int):
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
@@ -444,7 +450,6 @@ class ISTAR(IconScoreBase):
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
         return irc3.getTokenOwner(_tokenId)
 
-    # ----------------------------------------
     @external
     def getApproved(self, _tokenId:int):
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)

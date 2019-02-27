@@ -2,7 +2,7 @@
 Programmer    : 김승규, 정해민 - pair programming
 description   : IRC3 - NFT IMPLEMENTATION
 Update Date   : 2019.02.27
-Update        : IRC3 (name, symbol, balanceOf, ownerOf, getApproved, approve, transfer, transferFrom)
+Update        : FINISH
 """
 
 from iconservice import *
@@ -150,7 +150,6 @@ class IRC3(IconScoreBase):
         self.Transfer(_from, _to, _tokenId)
 
     # ******************* CUSTOM *******************
-
     @external
     def setToken(self, _tokenId:int, _property:str):
         self._token[_tokenId] = _property
