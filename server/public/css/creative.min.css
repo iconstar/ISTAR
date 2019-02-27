@@ -725,3 +725,18 @@
  }
  
  /* 커스터마이징 */
+ .win-title{
+    text-shadow: 2px 2px 6px black;
+    font-family: "Arial Black", sans-serif;
+    font-size: 36px;
+    font-weight: bold;
+    color: #1FC5C9;
+}
+
+.lose-title{
+    text-shadow: 2px 2px 6px black;
+    font-family: "Arial Black", sans-serif;
+    font-size: 36px;
+    font-weight: bold;
+    color: #808080;
+}

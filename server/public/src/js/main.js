@@ -15,7 +15,7 @@ const CallBuilder = IconService.IconBuilder.CallBuilder;
 // const iconWallet = IconService.IconWallet;
 
 // 커스텀 변수
-var score_to = 'cx6b8f1ba9aecf43bf3df46bf81e20a4fa048ee975';
+var score_to = 'cxa6b3cb2b3a474412d7f0b870525213a8665c77ec';
 var address = getParameterByAddress('address');
 
 
@@ -30,6 +30,10 @@ var clickSell = false;
 
 // 로딩바 바로 사라지게하기 위해
 $('#loading').hide();  
+// $('.loading').hide();  
+// window.onload = function(){ 
+//     document.getElementById("loading").style.display = "none" 
+// } 
 
 
 // 소유자의 카드 보여줌
@@ -41,7 +45,7 @@ myCard();
 document.getElementById('gameStart').addEventListener('click', async () => {
     clickGame = true;
 
-    $('#modal').hide();
+    $('#gameModal').hide();
     var date = new Date();
     // currentTime = date.getTime();
     current = String(date.getTime());
@@ -93,7 +97,7 @@ document.getElementById('gameStart').addEventListener('click', async () => {
 });
 
 document.getElementById('sellCard').addEventListener('click', async () => {
-    $('#modal').hide();
+    $('#sellModal').hide();
     clickSell = true;
 
     var player_id = document.getElementById('player_id').value;         // 2
@@ -148,15 +152,20 @@ function eventHandler(event) {
                 sleep(10000);
                 gemeResult();
                 $('#loading').hide();
+                location.reload();
                 clickGame = false;
+
             } else if (clickSell === true) {
                 console.log("클릭!! 카드 판매");
                 // getApprove();
                 clickSell = false;
             }
+            location.reload();
             break;
         case "CANCEL_JSON-RPC":
             console.log("CANCEL_JSON-RPC");
+            $('#loading').hide();
+            location.reload();
             break;
         case "RESPONSE_SIGNING":
             console.log("RESPONSE_SIGNING6");
