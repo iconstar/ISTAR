@@ -346,7 +346,7 @@ class ISTAR(IconScoreBase):
         tokenId = property["tokenId"]
         # Logger.warning(f"auctionBuy tokenId: {tokenId}", TAG)
 
-        if self.address != self.getApproved(tokenId):
+        if self.address != irc3.getApproved(tokenId):
             raise IconScoreException("You don't have access to Approve.")
 
         irc3.transferFrom(tokenOwner, self.msg.sender, tokenId)
@@ -369,23 +369,3 @@ class ISTAR(IconScoreBase):
 
         # token의 소유자를 approve 실행
         irc3.setApproveAddress(_to, _tokenId)
-
-    # @external
-    def getTotalToken(self) -> int:
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        return irc3.getTotalToken()
-
-    # @external
-    def getToken(self, _tokenId:int) ->str:
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        return irc3.getToken(_tokenId)
-
-    # @external
-    def getTokenOwner(self, _tokenId:int) ->Address:
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        return irc3.getTokenOwner(_tokenId)
-
-    # @external
-    def getApproved(self, _tokenId:int)->Address:
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        return irc3.getApproved(_tokenId)

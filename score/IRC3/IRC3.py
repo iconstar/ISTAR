@@ -150,8 +150,8 @@ class IRC3(IconScoreBase):
         self._token[_tokenId] = _property
 
     @external
-    def setTokenOwner(self, _tokenId:int, address:Address):
-        self._token_owner[_tokenId] = address
+    def setTokenOwner(self, _tokenId:int, _owner:Address):
+        self._token_owner[_tokenId] = _owner
 
     @external
     def setTotalToken(self, _totalToken: int):
