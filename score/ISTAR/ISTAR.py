@@ -1,3 +1,10 @@
+"""
+Programmer    : 김승규, 정해민 - pair programming
+description   : IRC3 - NFT IMPLEMENTATION
+Update Date   : 2019.02.28
+Update        : clean code before audit
+"""
+
 # IRC3 = cxc4176d1a82b7d32bd789c0abfc04175d5dd29950
 # ISTAR = cxa6b3cb2b3a474412d7f0b870525213a8665c77ec
 
@@ -153,7 +160,7 @@ class ISTAR(IconScoreBase):
 
     # 소유자의 모든 토큰 보여주기
     @external
-    def getMyCard(self):
+    def getMyCard(self)->list:
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
 
         totalToken = irc3.getTotalToken()
@@ -265,7 +272,7 @@ class ISTAR(IconScoreBase):
 
     # Get card list of auction
     @external
-    def getAuctionToken(self):
+    def getAuctionToken(self)->list:
         totalToken = self._total_auction.get()
 
         jsonAuctionList = []
@@ -364,21 +371,21 @@ class ISTAR(IconScoreBase):
         irc3.setApproveAddress(_to, _tokenId)
 
     # @external
-    def getTotalToken(self):
+    def getTotalToken(self) -> int:
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
         return irc3.getTotalToken()
 
     # @external
-    def getToken(self, _tokenId:int):
+    def getToken(self, _tokenId:int) ->str:
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
         return irc3.getToken(_tokenId)
 
     # @external
-    def getTokenOwner(self, _tokenId:int):
+    def getTokenOwner(self, _tokenId:int) ->Address:
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
         return irc3.getTokenOwner(_tokenId)
 
     # @external
-    def getApproved(self, _tokenId:int):
+    def getApproved(self, _tokenId:int)->Address:
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
         return irc3.getApproved(_tokenId)

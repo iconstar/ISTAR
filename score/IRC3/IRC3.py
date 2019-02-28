@@ -1,3 +1,10 @@
+"""
+Programmer    : 김승규, 정해민 - pair programming
+description   : IRC3 - NFT IMPLEMENTATION
+Update Date   : 2019.02.28
+Update        : clean code before audit
+"""
+
 from iconservice import *
 
 TAG = 'IRC3'
@@ -155,17 +162,17 @@ class IRC3(IconScoreBase):
         self._approve_address[_tokenId] = _to
 
     @external
-    def getTotalToken(self):
+    def getTotalToken(self) -> int:
         return self._total_token.get()
 
     @external
-    def getToken(self, _tokenId:int):
+    def getToken(self, _tokenId:int)->str:
         return self._token[_tokenId]
 
     @external
-    def getTokenOwner(self, _tokenId: int):
+    def getTokenOwner(self, _tokenId: int)->Address:
         return self._token_owner[_tokenId]
 
     @external
-    def getApproveAddress(self, _tokenId: int):
+    def getApproveAddress(self, _tokenId: int)->Address:
         return self._approve_address[_tokenId]
