@@ -1,8 +1,8 @@
 """
 Programmer    : 김승규, 정해민 - pair programming
-description   : ISTAR SCORE of ICON
-Update Date   : 2019.02.27
-Update        : COMPLETE ISTAR 
+description   : IRC3 - NFT IMPLEMENTATION
+Update Date   : 2019.02.28
+Update        : clean code before audit
 """
 
 # IRC3 = cxc4176d1a82b7d32bd789c0abfc04175d5dd29950
@@ -91,34 +91,28 @@ class ISTAR(IconScoreBase):
 
     def __init__(self, db: IconScoreDatabase) -> None:
         super().__init__(db)
-        # 게임 결과 저장 변수
+        # GAME RESULT
         self._game_result = DictDB("GAME_REUSLT", db, value_type=int)
-        # 경매 db
+        # AUCTION CARDS
         self._auction = DictDB("AUCTION", db, value_type=str)
-        # self._auction = ArrayDB("AUCTION", db, value_type=str)
-        # 경매에 올라가 있는 카드 수
+        # Number of acution cards
         self._total_auction = VarDB("TOTALAUCTION", db, value_type=int)
 
     def on_install(self) -> None:
         super().on_install()
         self._total_auction.set(0)
-        # tokenAddress = "cxcc1775da63f9d844596d769b96b56d71bc8a1ee8"
-        # irc3 = self.create_interface_score("", IRC3Interface)
 
     def on_update(self) -> None:
         super().on_update()
 
+    # CREATE TOKEN
     @external
     @payable
     def createCard(self, _grade: int):
-        ####### 토큰 추가 #######
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
 
         total_token = irc3.getTotalToken()
-        # Logger.warning(f'totkal_tokne {total_token}', TAG)
-        tokenId = total_token  # 3
-
-        Logger.warning(f"totalToken: {total_token}")
+        tokenId = total_token
 
         player = ['Bryant', 'Curry', 'Griffin', 'Harden', 'Hayward', 'Irving', 'Jordan', 'Lebron']
 
@@ -136,7 +130,6 @@ class ISTAR(IconScoreBase):
         json_property['dribble'] = int.from_bytes(sha3_256(
             self.msg.sender.to_bytes() + str(self.block.timestamp).encode() + "dribble".encode()), 'big') % 100
 
-        # 에러 처리 고민
         if _grade == 1:
             # normal grade
             json_property['run'] += 100
@@ -157,20 +150,17 @@ class ISTAR(IconScoreBase):
 
         ## 토큰에다 속성을 정의
         irc3.setToken(tokenId, str(json_property))
-        # self._token[tokenId] = str(json_property)
 
         # 만든 토큰에 소유자를 정의
-        # self._token_owner[tokenId] = self.msg.sender
         irc3.setTokenOwner(tokenId, self.msg.sender)
 
         # 발행된 토큰 수 증가 (+1) - 카드 하나 생성
         total_token += 1
         irc3.setTotalToken(total_token)
-        # self._total_token.set(total_token)
 
     # 소유자의 모든 토큰 보여주기
     @external
-    def getMyCard(self):
+    def getMyCard(self)->list:
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
 
         totalToken = irc3.getTotalToken()
@@ -179,169 +169,147 @@ class ISTAR(IconScoreBase):
         for i in range(totalToken):
             if irc3.getTokenOwner(i) == self.msg.sender:
                 jsonCardList.append(irc3.getToken(i))
-                # jsonCardList.append(self._token[i])
+
         return jsonCardList
 
     # 게임실행, 카드 등급에 따라 승률 조작
-    # &**************** 에러 처리 코드 넣기!!
     @external
     @payable
     def startGame(self, _time: str):
-        ##### 주의 !!! 스코어에 돈없으면 그냥 졌다고 나옴!!! 돈 뺐지도 않음 그냥 돈 안빠져나감
-        # 에러 처리하기!!
+        amount = self.msg.value
 
-        # 게임결과 키 값 생성
+        # Bets must be under 100 ICX
+        if amount <= 0 or amount > 100 * 10 ** 18:
+            Logger.debug(f'Betting amount {amount} out of range.', TAG)
+            revert(f'Betting amount {amount} out of range.')
+
+        # We need at least 2x the betting amount in balance in order to take the bet
+        if (self.icx.get_balance(self.address)) < 2 * amount:
+            Logger.debug(f'Not enough in treasury to make the play.', TAG)
+            revert('Not enough in treasury to make the play.')
+
+        # Generate game result key
         hash_time = sha3_256(str(_time).encode()+str(self.msg.sender).encode())
 
-        # 게임확률 조작
+        # Determining GAME Probability
         game_property = int.from_bytes(sha3_256(
             self.msg.sender.to_bytes() + str(self.block.timestamp).encode() + "run".encode()), 'big') % 100
 
-        # 카드 정보 가져 옴
+        # Get my cards
         cardList = self.getMyCard()
         cardCount = len(cardList)
 
-        # cardList = self.showAllCard()
-        # cardCount = len(cardList)
-
-        # 자신이 소유한 카드 속성 중 제일 큰 값 가져오기
+        # Get the largest value of card attributes that you own
         max = 0
-        # 카드 속성 정보 가져옴
         for i in range(cardCount):
             cards = eval(cardList[i])
-            # print("cards: ", cards)
-            # print("player: ", cards['player'])
             property_sum = (cards['run'] + cards['power'] + cards['dribble']) / 3
-            # print("property_sum: ", property_sum)
 
             if max <= (property_sum):
                 max = property_sum
 
-        # 이길 확률 조정
+        # Determining Win Probability
         win_probability = 0
 
-        # 값(능력치)에 따라 이길 확률 조정!
+        # Determining Win Card Stats
         if max >= 100 and max < 200:
             win_probability += 30
-            print(f"100 ~ 200: {win_probability}")
         elif max >= 200 and max < 300:
             win_probability += 30 + (max / 10)
-            print(f"200 ~ 300: {win_probability}")
         elif max >= 300 and max <= 400:
             win_probability += 30 + (max / 10) + ((max / 10) / 5)
-            print(f"300 ~ 400: {win_probability}")
         else:
-            raise IconScoreException("max 값 오류 입니다.")
+            raise IconScoreException("Card Stats Value is an error.")
 
-        # 게임 시작
+        # PLAY Game
         if win_probability >= game_property:
-            # 이김
+            # CASE Win
             self.icx.transfer(self.msg.sender, self.msg.value * 2)
             self._game_result[hash_time] = 1
-            Logger.warning(f"win {self._game_result[hash_time]}", TAG)
         else:
+            # CASE Lose
             self._game_result[hash_time] = 0
-            Logger.warning(f"lose {self._game_result[hash_time]}", TAG)
 
-    # 게임 결과 가져오는 코드
+    # Get game result
     @external(readonly=True)
     def getGameResult(self, _time: str) -> int:
-        # 게임결과 키 값 생성
+        # Generate game result key
         hash_time = sha3_256(str(_time).encode() + str(self.msg.sender).encode())
 
-        Logger.warning(f"결과: {self._game_result[hash_time]}", TAG)
         return self._game_result[hash_time]
 
+    # the sale of one's own card
     @external
     @payable
     def auctionSell(self, _playerId: int, _price: int):
-        # auction 저장되어 있는 토큰이 같은 키면 에러 처리
         myCardList = self.getMyCard()
+        cardCount = len(myCardList)
 
-        Logger.warning(f"auctionSell myCardList: {myCardList}", TAG)
+        if _playerId > cardCount:
+            raise IconScoreException("INPUT ERROR: The factor is greater than the number of cards")
 
         sellCard = eval(myCardList[_playerId - 1])
 
-        Logger.warning(f"auctionSell sellCard: {sellCard}", TAG)
-
         tokenId = sellCard["tokenId"]
-        Logger.warning(f"auctionSell tokenId: {tokenId}", TAG)
-        Logger.warning(f"auctionSell self.msg.sender: {self.msg.sender}", TAG)
-        Logger.warning(f"auctionSell self.address: {self.address}", TAG)
 
         json_sell = {}
         json_sell['address'] = str(self.msg.sender)
-        # Logger.warning(f"json_sell['address']: {json_sell['address']}", TAG)
         json_sell['property'] = sellCard
-        # Logger.warning(f"json_sell['property']: {json_sell['property']}", TAG)
         json_sell['price'] = _price
-        # Logger.warning(f"json_sell['_price']: {json_sell['price']}", TAG)
 
-        Logger.warning(f"auctionSell SELL SUCCESS: {str(json_sell)}", TAG)
-
+        # 현재 경매장에 있는 카드 수
         totalAuction = self._total_auction.get()
-        Logger.warning(f"auctionSell totalAuction: {totalAuction}", TAG)
-        self._auction[totalAuction] = str(json_sell)
-        # self._auction.put(str(json_sell))
-        Logger.warning(f"auctionSell self._auction[totalAuction]: {self._auction[totalAuction]}", TAG)
 
-        # 경매에 올라가져 있어 경매 카드 수 하나 증가
+        # 경매DB에 판매하는 카드 정보 올림
+        self._auction[totalAuction] = str(json_sell)
+
+        # 경매 db에 데이터 추가해서 count 증가
         totalAuction +=1
         self._total_auction.set(totalAuction)
-        Logger.warning(f"self._total_auction.get: {self._total_auction.get()}", TAG)
 
         # approve
         self._approve(self.address, tokenId)
-        # self.approve(self.address, tokenId)
 
-    # 경매에 올라온 카드들을 가져옴
+    # Get card list of auction
     @external
-    def getAuctionToken(self):
+    def getAuctionToken(self)->list:
         totalToken = self._total_auction.get()
-        Logger.warning(f" getAuctionToken totalToken: {totalToken}", TAG)
+
         jsonAuctionList = []
 
         for i in range(totalToken):
             jsonAuctionList.append(self._auction[i])
 
-        Logger.warning(f" getAuctionToken jsonAuctionList: {jsonAuctionList}", TAG)
         return jsonAuctionList
 
+    # Buying a card in a auction
     @external
     @payable
     def auctionBuy(self, _playerId: int, _price: int):
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-
-        # 경매의 카드들 가져옴
+        # get card list of auction
         auctionCardList = self.getAuctionToken()
-        Logger.warning(f"auctionBuy auctionCardList: { auctionCardList }", TAG)
-        # 구매자가 선택한 카드 정보 가져옴
+        cardCount = len(auctionCardList)
+
+        if _playerId > cardCount:
+            raise IconScoreException("INPUT ERROR: The factor is greater than the number of cards")
+
+        # get selected card info
         cardProperty = eval(auctionCardList[_playerId-1])
-        Logger.warning(f"auctionBuy cardProperty: { cardProperty }", TAG)
 
         # 카드의 소유자 선택
         tokenOwner = Address.from_string(cardProperty["address"])
-        Logger.warning(f"auctionBuy tokenOwner: {tokenOwner}", TAG)
         property = cardProperty["property"]
-        Logger.warning(f"auctionBuy property: {property}", TAG)
 
         # 해당 카드의 토큰ID 가져옴
         tokenId = property["tokenId"]
-        Logger.warning(f"auctionBuy tokenId: {tokenId}", TAG)
 
-        # approve 함
-        self._buyApprove(self.msg.sender, _playerId)
-        # Logger.warning("2", TAG)
-        # trasnferFrom
-        # irc3.transferFrom(tokenOwner, self.msg.sender, tokenId)
-        # Logger.warning("3", TAG)
+        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
+
+        # 추가! score 가 호출해야함!
+        if self.address != irc3.getApproved(tokenId):
+            raise IconScoreException("You don't have access to Approve.")
 
         totalAuction = self._total_auction.get()
-
-        Logger.warning(f"auctionBuy totalAuction: {totalAuction}", TAG)
-        # self._auction[_playerId-1]
-        Logger.warning(f"auctionBuy self._auction[_playerId-1]: {self._auction[_playerId-1]}", TAG)
-        Logger.warning(f"auctionBuy self._auction[totalAuction]: {self._auction[totalAuction-1]}", TAG)
 
         ## 구매시 경매 카드 수 하나 감소
         # 마지막 변수랑 swapping
@@ -349,108 +317,31 @@ class ISTAR(IconScoreBase):
         self._auction[_playerId-1] = self._auction[totalAuction-1] # 5 -> 2 = 5
         self._auction[totalAuction-1] = temp  # 5 -> temp  = 2
 
-        Logger.warning(f"auctionBuy self._auction[_playerId-1]: {self._auction[_playerId - 1]}", TAG)
-        Logger.warning(f"auctionBuy self._auction[totalAuction]: {self._auction[totalAuction-1]}", TAG)
-
+        # delete auction info
         del self._auction[totalAuction-1]
 
         totalAuction -= 1
         self._total_auction.set(totalAuction)
-        Logger.warning(f"auctionBuy self._total_auction: {self._total_auction.get()}", TAG)
 
-        # 데이터 삭제
-        # self._auction.pop()
-
-        Logger.warning(f"auctionBuy self._auction[_playerId-1]: {self._auction[_playerId - 1]}", TAG)
-        Logger.warning(f"auctionBuy self._auction[totalAuction]: {self._auction[totalAuction]}", TAG)
-
+        # transfer
         price = _price * (10 ** 18)
-        Logger.warning(f"auctionBuy price: {price}", TAG)
-        self.icx.transfer(tokenOwner, price)
-        # flag = self.icx.send(tokenOwner, _price*10*18)
-
-        # Logger.warning(f"auctionBuy flag: {flag}", TAG)
-        # Logger.warning("5", TAG)
-
-        # # 경매장에 있는 정보 삭제
-        # # self._auction.pop(_playerId-1)
-        # Logger.warning(f"AC1 {self._auction[_playerId - 1]}")
-        # Logger.warning(f"AC2 {self._auction[_playerId - 1]}")
-        #
-        # Logger.warning("4", TAG)
-
-    # ---------------------------------------- 필요한 함수
-
-    def _buyApprove(self, _to:Address, _playerId:int):
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-
-        # 경매의 카드들 가져옴
-        auctionCardList = self.getAuctionToken()
-        # Logger.warning(f"auctionBuy auctionCardList: {auctionCardList}", TAG)
-        # 구매자가 선택한 카드 정보 가져옴
-        cardProperty = eval(auctionCardList[_playerId - 1])
-        # Logger.warning(f"auctionBuy cardProperty: {cardProperty}", TAG)
-
-        # 카드의 소유자 선택
-        tokenOwner = Address.from_string(cardProperty["address"])
-        Logger.warning(f"auctionBuy tokenOwner: {tokenOwner}", TAG)
-        property = cardProperty["property"]
-        Logger.warning(f"auctionBuy property: {property}", TAG)
-        price = cardProperty["price"]
-        Logger.warning(f"price: {price}", TAG)
-
-        # 해당 카드의 토큰ID 가져옴
-
-        tokenId = property["tokenId"]
-        # Logger.warning(f"auctionBuy tokenId: {tokenId}", TAG)
-
-        if self.address != self.getApproved(tokenId):
-            raise IconScoreException("Approve4 가 일치하지 않습니다.!!")
-
         irc3.transferFrom(tokenOwner, self.msg.sender, tokenId)
-
         self.icx.transfer(tokenOwner, price)
-
 
     def _approve(self, _to: Address, _tokenId: int):
         irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        # 호출한 사람이 토큰을 가지고 잇는지 확인
+        # 예외처리 - 호출한 사람이 토큰을 가지고 있는지 확인
         if self.msg.sender != irc3.getTokenOwner(_tokenId):
-            # 에러 처리
-            raise IconScoreException("approve 1")
-            # raise IconScoreException("approve 1: YOU CAN;'너 이거 못보내(너 이 토큰 없잖아!~~) ")
+            raise IconScoreException("Throws unless self.msg.sender is the current NFT owner.")
 
-        # 내가 나한테 approve를 못함
+        # 예외처리 - 내가 나한테 approve를 못함
         if self.msg.sender == _to:
-            raise IconScoreException("approve 2")
-            # raise IconScoreException("approve 2: 너가 너한테 이거 못보내지롱~~ (너 이 토큰 없잖아!~~) ")
-            # pass
+            raise IconScoreException("I can't make an approve of myself.")
 
-        # _to 이미 토큰을 가지고 있는지 확인
+        # 예외처리 - _to 이미 토큰을 가지고 있는지 확인
         if _to == irc3.getTokenOwner(_tokenId):
-            raise IconScoreException("approve 3")
-            # raise IconScoreException("approve 3: to가 이미 소유 중 (니꺼잖아!! 자신의 토큰을 자신에게 approve할 필요 없습니다.")
-            # 에러 처리
+            raise IconScoreException("You don't have to approve your token to yourself.")
 
         # token의 소유자를 approve 실행
         irc3.setApproveAddress(_to, _tokenId)
 
-    @external
-    def getTotalToken(self):
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        return irc3.getTotalToken()
-
-    @external
-    def getToken(self, _tokenId:int):
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        return irc3.getToken(_tokenId)
-
-    @external
-    def getTokenOwner(self, _tokenId:int):
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        return irc3.getTokenOwner(_tokenId)
-
-    @external
-    def getApproved(self, _tokenId:int):
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-        return irc3.getApproved(_tokenId)
