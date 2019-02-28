@@ -303,8 +303,11 @@ class ISTAR(IconScoreBase):
         # 해당 카드의 토큰ID 가져옴
         tokenId = property["tokenId"]
 
-        # approve 함
-        self._buyApprove(self.msg.sender, _playerId)
+        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
+
+        # 추가! score 가 호출해야함!
+        if self.address != irc3.getApproved(tokenId):
+            raise IconScoreException("You don't have access to Approve.")
 
         totalAuction = self._total_auction.get()
 
@@ -322,35 +325,7 @@ class ISTAR(IconScoreBase):
 
         # transfer
         price = _price * (10 ** 18)
-        self.icx.transfer(tokenOwner, price)
-
-    def _buyApprove(self, _to:Address, _playerId:int):
-        irc3 = self.create_interface_score(Address.from_string(self.IRC3Address), IRC3Interface)
-
-        # 경매의 카드들 가져옴
-        auctionCardList = self.getAuctionToken()
-        # Logger.warning(f"auctionBuy auctionCardList: {auctionCardList}", TAG)
-        # 구매자가 선택한 카드 정보 가져옴
-        cardProperty = eval(auctionCardList[_playerId - 1])
-        # Logger.warning(f"auctionBuy cardProperty: {cardProperty}", TAG)
-
-        # 카드의 소유자 선택
-        tokenOwner = Address.from_string(cardProperty["address"])
-        # Logger.warning(f"auctionBuy tokenOwner: {tokenOwner}", TAG)
-        property = cardProperty["property"]
-        # Logger.warning(f"auctionBuy property: {property}", TAG)
-        price = cardProperty["price"]
-        # Logger.warning(f"price: {price}", TAG)
-
-        # 해당 카드의 토큰ID 가져옴
-        tokenId = property["tokenId"]
-        # Logger.warning(f"auctionBuy tokenId: {tokenId}", TAG)
-
-        if self.address != irc3.getApproved(tokenId):
-            raise IconScoreException("You don't have access to Approve.")
-
         irc3.transferFrom(tokenOwner, self.msg.sender, tokenId)
-
         self.icx.transfer(tokenOwner, price)
 
     def _approve(self, _to: Address, _tokenId: int):
@@ -369,3 +344,4 @@ class ISTAR(IconScoreBase):
 
         # token의 소유자를 approve 실행
         irc3.setApproveAddress(_to, _tokenId)
+
