@@ -25,7 +25,7 @@ def symbol(self) -> str:
 ##### balanceOf
 ```python
 @external(readonly=True)
-  def balanceOf(self, _owner: Address) -> int:
+def balanceOf(self, _owner: Address) -> int:
 ```
  - `_owner`의 토큰 갯수를 반환홤
 
