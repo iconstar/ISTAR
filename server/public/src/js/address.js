@@ -6,8 +6,6 @@ function goMyTeam() {
     location.href = "./main.html?address="+address;
 }
 
-
-
 // ################# main.html  #################
 // 경매 화면으로 이동
 function goMarket() {
@@ -20,13 +18,13 @@ function buyCard() {
     var address = getParameterByAddress("address");
     location.href = "./card.html?address="+address;
 }
-
+// Game 화면으로 이동
 function goGame() {
     var address = getParameterByAddress("address");
     location.href = "./gamepage.html?address="+address;
 }
 
-// get방식으로 넘어온 address 를 리턴함
+// get방식으로 넘어온 url 에서 address 부분 추출
 function getParameterByAddress(address) {
     var address = address.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + address + "=([^&#]*)"),

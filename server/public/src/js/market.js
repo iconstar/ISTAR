@@ -54,58 +54,63 @@ document.getElementById('buyCard').addEventListener('click', async () => {
         cardList.push(myCards[i]);
     }
     
-    var selectCard = cardList[player_id-1];
-    console.log("selectCard: "+selectCard);
-    
-    var card_str = selectCard.replace(/\'/gi, "\"");
-    if(!card_str) {
+    if(myCards.length < player_id) {
         alert("잘못된 입력!!");
-    }
-    var card_property = JSON.parse(card_str);
-    var price = String(card_property.price);
-
-    console.log("price: "+price);
-    // var card_address = card_property.address;
-
-    console.log("price: "+typeof(price));
-    // console.log("price: "+price);
-
-    // console.log("player_id: "+ player_id);
-    // console.log("CLICK BUY CARD");
-
-    var callTransactionBuilder = new IconBuilder.CallTransactionBuilder;
-    var callTransactionData = callTransactionBuilder
-        .from(address)
-        .to(score_to)
-        .nid(IconConverter.toBigNumber(3))
-        .value(IconAmount.of(Number(price), IconAmount.Unit.ICX).toLoop())
-        .timestamp((new Date()).getTime() * 1000)
-        .stepLimit(IconConverter.toBigNumber(10000000))
-        .version(IconConverter.toBigNumber(3))
-        .method('auctionBuy')
-        .params({  
-            "_playerId":player_id,
-            "_price":price
-        })
-        .build();
+        location.reload();
         
-
-    var score_sdk = JSON.stringify( {
-        "jsonrpc":"2.0",
-        "method":"icx_sendTransaction",
-        "params":IconConverter.toRawTransaction(callTransactionData),
-        "id":50889
-    })
-
-    var parsed = JSON.parse(score_sdk)
-    console.log("parsed: "+parsed);
-
-    window.dispatchEvent(new CustomEvent('ICONEX_RELAY_REQUEST', {
-        detail: {
-            type: 'REQUEST_JSON-RPC',
-            payload: parsed,
+    } else {
+        var selectCard = cardList[player_id-1];
+        console.log("selectCard: "+selectCard);
+        
+        var card_str = selectCard.replace(/\'/gi, "\"");
+        if(!card_str) {
+            alert("잘못된 입력!!");
         }
-    }));
+        var card_property = JSON.parse(card_str);
+        var price = String(card_property.price);
+
+        console.log("price: "+price);
+        // var card_address = card_property.address;
+
+        console.log("price: "+typeof(price));
+        // console.log("price: "+price);
+
+        // console.log("player_id: "+ player_id);
+        // console.log("CLICK BUY CARD");
+
+        var callTransactionBuilder = new IconBuilder.CallTransactionBuilder;
+        var callTransactionData = callTransactionBuilder
+            .from(address)
+            .to(score_to)
+            .nid(IconConverter.toBigNumber(3))
+            .value(IconAmount.of(Number(price), IconAmount.Unit.ICX).toLoop())
+            .timestamp((new Date()).getTime() * 1000)
+            .stepLimit(IconConverter.toBigNumber(10000000))
+            .version(IconConverter.toBigNumber(3))
+            .method('auctionBuy')
+            .params({  
+                "_playerId":player_id,
+                "_price":price
+            })
+            .build();
+
+        var score_sdk = JSON.stringify( {
+            "jsonrpc":"2.0",
+            "method":"icx_sendTransaction",
+            "params":IconConverter.toRawTransaction(callTransactionData),
+            "id":50889
+        })
+
+        var parsed = JSON.parse(score_sdk)
+        console.log("parsed: "+parsed);
+
+        window.dispatchEvent(new CustomEvent('ICONEX_RELAY_REQUEST', {
+            detail: {
+                type: 'REQUEST_JSON-RPC',
+                payload: parsed,
+            }
+        }));
+    }
 });
 
 // 이벤트 핸들러 - ICONex
@@ -116,21 +121,20 @@ function eventHandler(event) {
     switch (type) {
         case "RESPONSE_JSON-RPC":
             console.log("RESPONSE_JSON-RPC: "+JSON.stringify(payload));
-            
-            
-            
-            
             location.reload();
 
             break;
         case "CANCEL_JSON-RPC":
             console.log("CANCEL_JSON-RPC");
+            location.reload();
             break;
         case "RESPONSE_SIGNING":
             console.log("RESPONSE_SIGNING6");
+            location.reload();
             break;
         case "CANCEL_SIGNING":
             console.log("CANCEL_SIGNING");
+            location.reload();
             break;
         default:
     }
