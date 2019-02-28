@@ -18,7 +18,7 @@ function eventHandler(event) {
 
     switch (type) {
         case "RESPONSE_JSON-RPC":
-            console.log("CANCEL_JSON-RPC");
+            console.log("RESPONSE_JSON-RPC");
             break;
         case "CANCEL_JSON-RPC":
             console.log("CANCEL_JSON-RPC");
